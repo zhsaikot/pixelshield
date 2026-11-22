@@ -88,16 +88,29 @@ export class App {
     this.sidebarCloseBtn = document.getElementById('sidebar-close-btn');
     this.sidebarBackdrop = document.getElementById('sidebar-backdrop');
     
+    // Update toggle button tooltip and label
+    const updateToggleText = (collapsed) => {
+      if (!this.sidebarToggleBtn) return;
+      const textSpan = this.sidebarToggleBtn.querySelector('.collapse-btn-text');
+      if (textSpan) {
+        textSpan.textContent = collapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
+      }
+      this.sidebarToggleBtn.setAttribute('title', collapsed ? 'Expand Sidebar' : 'Collapse Sidebar');
+      this.sidebarToggleBtn.setAttribute('aria-label', collapsed ? 'Expand Sidebar' : 'Collapse Sidebar');
+    };
+
     // Restore collapsed state (desktop)
     const isCollapsed = localStorage.getItem('pixelshield_sidebar_collapsed') === 'true';
     if (isCollapsed && this.studioShell) {
       this.studioShell.classList.add('sidebar-collapsed');
     }
+    updateToggleText(isCollapsed);
 
     if (this.sidebarToggleBtn && this.studioShell) {
       this.sidebarToggleBtn.addEventListener('click', () => {
         const collapsed = this.studioShell.classList.toggle('sidebar-collapsed');
         localStorage.setItem('pixelshield_sidebar_collapsed', collapsed.toString());
+        updateToggleText(collapsed);
       });
     }
 
