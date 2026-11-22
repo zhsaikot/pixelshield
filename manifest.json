@@ -8,7 +8,7 @@
   "description": "100% Client-Side Privacy Image & Document Studio. Compress images, hit exact target KB limits, convert WebP/JPEG/PNG formats, scrub EXIF metadata, and generate official passport & visa photo sheets locally in your browser.",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%232A7F62'><rect width='512' height='512' rx='128' fill='%232A7F62'/><path d='M256 64L96 128v128c0 118.4 81.9 229.1 160 256 78.1-26.9 160-137.6 160-256V128L256 64zm-32 304l-80-80 28.3-28.3L224 311.4l147.7-147.7 28.3 28.3L224 368z' fill='white'/></svg>",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='128' fill='%232A7F62'/%3E%3Cg transform='scale(16) translate(4, 4)' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='3.5'/%3E%3Ccircle cx='8' cy='8.5' r='1.5' fill='%23FFFFFF'/%3E%3Cpath d='m21 15-4-4a2 2 0 0 0-2.8 0L5 20'/%3E%3Cpath d='M16 4C16 5.66 17.34 7 19 7C17.34 7 16 8.34 16 10C16 8.34 14.66 7 13 7C14.66 7 16 5.66 16 4Z' fill='%23FFFFFF' stroke='none'/%3E%3C/g%3E%3C/svg%3E",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
