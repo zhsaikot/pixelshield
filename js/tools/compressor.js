@@ -189,10 +189,16 @@ export class CompressorTool {
     if (this.compareSliderContainer) {
       const updateSplit = (clientX) => {
         const rect = this.compareSliderContainer.getBoundingClientRect();
+        if (rect.width <= 0) return;
         const offsetX = Math.max(0, Math.min(rect.width, clientX - rect.left));
-        const pct = (offsetX / rect.width) * 100;
-        this.compareLayerBefore.style.width = `${pct}%`;
-        this.compareDividerHandle.style.left = `${pct}%`;
+        const pct = Math.max(0, Math.min(100, (offsetX / rect.width) * 100));
+        if (this.compareLayerBefore) {
+          this.compareLayerBefore.style.clipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
+          this.compareLayerBefore.style.webkitClipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
+        }
+        if (this.compareDividerHandle) {
+          this.compareDividerHandle.style.left = `${pct}%`;
+        }
       };
 
       this.compareSliderContainer.addEventListener('mousedown', (e) => {
@@ -602,8 +608,13 @@ export class CompressorTool {
     }
 
     // Reset split to 50%
-    if (this.compareLayerBefore) this.compareLayerBefore.style.width = '50%';
-    if (this.compareDividerHandle) this.compareDividerHandle.style.left = '50%';
+    if (this.compareLayerBefore) {
+      this.compareLayerBefore.style.clipPath = 'polygon(0 0, 50% 0, 50% 100%, 0 100%)';
+      this.compareLayerBefore.style.webkitClipPath = 'polygon(0 0, 50% 0, 50% 100%, 0 100%)';
+    }
+    if (this.compareDividerHandle) {
+      this.compareDividerHandle.style.left = '50%';
+    }
 
     this.compareModal.classList.add('active');
   }
@@ -611,6 +622,7 @@ export class CompressorTool {
   closeCompareModal() {
     if (!this.compareModal) return;
     this.compareModal.classList.remove('active');
+    this.isComparing = false;
     if (this.compareImgAfter.src && this.compareImgAfter.src.startsWith('blob:')) {
       URL.revokeObjectURL(this.compareImgAfter.src);
     }
