@@ -437,8 +437,8 @@ export class PassportMakerTool {
   drawBiometricGuides(ctx, w, h) {
     ctx.save();
 
-    // Center vertical guideline
-    ctx.strokeStyle = 'rgba(59, 130, 246, 0.45)';
+    // Center vertical guideline (Pine-Blue tint)
+    ctx.strokeStyle = 'rgba(83, 128, 131, 0.55)';
     ctx.lineWidth = 1.5;
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
@@ -446,7 +446,7 @@ export class PassportMakerTool {
     ctx.lineTo(w / 2, h);
     ctx.stroke();
 
-    // Biometric Face Oval Guide (Crown to Chin envelope)
+    // Biometric Face Oval Guide (Crown to Chin envelope - Jungle Teal)
     // In standard passport photos, the head (crown of hair to bottom of chin)
     // should measure between 70% and 80% of the total height.
     const ovalCenterX = w / 2;
@@ -454,7 +454,7 @@ export class PassportMakerTool {
     const radiusX = w * 0.30;
     const radiusY = h * 0.36;
 
-    ctx.strokeStyle = 'rgba(16, 185, 129, 0.85)';
+    ctx.strokeStyle = 'rgba(42, 127, 98, 0.9)';
     ctx.lineWidth = 2;
     ctx.setLineDash([]);
     ctx.beginPath();
