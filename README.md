@@ -1,4 +1,4 @@
-# PixelSafe Studio 🛡️
+# PixelShield 🛡️
 > **100% Client-Side Privacy Image & Document Studio**  
 > Pure HTML5, Modern CSS3, and Modular Vanilla ES6+ JavaScript. Optimized for direct deployment on GitHub Pages with zero server backend.
 
@@ -81,20 +81,20 @@ All asset and script references use clean relative paths (`./css/...`, `./js/...
 
 ## 🚀 Deployment to GitHub Pages
 
-Deploying PixelSafe Studio takes less than 60 seconds:
+Deploying PixelShield takes less than 60 seconds:
 
 1. **Initialize Git Repository:**
    ```bash
-   cd privacy-image-studio
+   cd pixelshield
    git init
    git add .
-   git commit -m "feat: initial commit of PixelSafe Studio"
+   git commit -m "feat: initial commit of PixelShield"
    ```
 
 2. **Push to GitHub:**
    ```bash
    git branch -M main
-   git remote add origin https://github.com/<your-username>/<your-repo-name>.git
+   git remote add origin https://github.com/zhsaikot/pixelshield.git
    git push -u origin main
    ```
 
@@ -103,13 +103,13 @@ Deploying PixelSafe Studio takes less than 60 seconds:
    - Under **Build and deployment** → **Source**, select `Deploy from a branch`.
    - Select branch `main` and folder `/(root)`.
    - Click **Save**.
-   - Your studio will be live in moments at: `https://<your-username>.github.io/<your-repo-name>/`
+   - Your studio will be live in moments at: `https://zhsaikot.github.io/pixelshield/`
 
 ---
 
 ## 💻 Running Locally
 
-Because PixelSafe Studio uses pure Vanilla ES6 JavaScript modules (`import`/`export`), it should be served via any local HTTP server (browser security policies restrict ES6 module loading directly over `file://`):
+Because PixelShield uses pure Vanilla ES6 JavaScript modules (`import`/`export`), it should be served via any local HTTP server (browser security policies restrict ES6 module loading directly over `file://`):
 
 ### Option 1: Python 3
 ```bash
@@ -131,7 +131,7 @@ Right-click `index.html` and click **"Open with Live Server"**.
 
 ## 🛡️ Security & Privacy Architecture
 
-| Vector | PixelSafe Studio Implementation | Risk Level |
+| Vector | PixelShield Implementation | Risk Level |
 | :--- | :--- | :--- |
 | **Network Requests** | Zero outbound requests for image data. Images never touch any server. | **None (0%)** |
 | **EXIF & Geolocation** | Redrawn to canvas memory buffer, discarding all TIFF/EXIF/GPS metadata chunks. | **Purged completely** |

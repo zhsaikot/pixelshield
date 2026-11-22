@@ -10,7 +10,7 @@ import { PassportMakerTool } from './tools/passport-maker.js';
 
 class App {
   constructor() {
-    this.currentTheme = localStorage.getItem('pixelsafe_theme') || this.getSystemThemePreference();
+    this.currentTheme = localStorage.getItem('pixelshield_theme') || localStorage.getItem('pixelsafe_theme') || this.getSystemThemePreference();
     this.activeTab = 'compress';
 
     this.initTheme();
@@ -32,7 +32,7 @@ class App {
     themeBtn.addEventListener('click', () => {
       this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', this.currentTheme);
-      localStorage.setItem('pixelsafe_theme', this.currentTheme);
+      localStorage.setItem('pixelshield_theme', this.currentTheme);
       this.updateThemeButtonIcon(themeBtn);
       this.showToast(`Switched to ${this.currentTheme} mode`, 'info', 2000);
     });
@@ -200,5 +200,5 @@ class App {
 
 // Bootstrap Application on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  window.__PIXEL_SAFE_APP__ = new App();
+  window.__PIXEL_SHIELD_APP__ = new App();
 });

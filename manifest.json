@@ -1,6 +1,6 @@
 {
-  "name": "PixelSafe Studio - Privacy Image & Document Studio",
-  "short_name": "PixelSafe",
+  "name": "PixelShield - Privacy Image & Document Studio",
+  "short_name": "PixelShield",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",
