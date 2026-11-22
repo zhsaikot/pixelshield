@@ -576,8 +576,9 @@ a:hover {
 }
 
 .studio-topbar {
-  height: var(--topbar-height);
-  padding: 0 1.75rem;
+  min-height: var(--topbar-height);
+  height: auto;
+  padding: 0.9rem 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3413,8 +3414,9 @@ a:hover {
   }
 
   .studio-topbar {
-    padding: 0 1rem;
-    height: 56px;
+    padding: 0.65rem 1rem;
+    min-height: 60px;
+    height: auto;
     gap: 0.75rem;
   }
 
