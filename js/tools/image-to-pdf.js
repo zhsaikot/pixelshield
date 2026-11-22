@@ -123,7 +123,7 @@ export class ImageToPdfTool {
           id,
           file,
           imgData,
-          thumbUrl: imgData.img.src
+          thumbUrl: imgData.thumbUrl || imgData.objectUrl || imgData.img.src
         });
         addedCount++;
       } catch (err) {
@@ -166,7 +166,7 @@ export class ImageToPdfTool {
 
     card.innerHTML = `
       <div class="pdf-thumb-box">
-        <img src="${page.thumbUrl}" alt="Page ${index + 1}" loading="lazy" />
+        <img src="${page.thumbUrl}" alt="Page ${index + 1}" />
         <span class="pdf-page-badge">Page ${index + 1}</span>
       </div>
       <div class="pdf-page-meta">
@@ -247,11 +247,19 @@ export class ImageToPdfTool {
   }
 
   removePage(index) {
-    this.pages.splice(index, 1);
+    const [removed] = this.pages.splice(index, 1);
+    if (removed && removed.imgData && removed.imgData.objectUrl) {
+      URL.revokeObjectURL(removed.imgData.objectUrl);
+    }
     this.renderPages();
   }
 
   clearAll() {
+    this.pages.forEach((p) => {
+      if (p.imgData && p.imgData.objectUrl) {
+        URL.revokeObjectURL(p.imgData.objectUrl);
+      }
+    });
     this.pages = [];
     this.renderPages();
     this.app.showToast('Cleared all pages', 'info');

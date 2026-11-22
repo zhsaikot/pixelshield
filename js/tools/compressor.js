@@ -412,11 +412,11 @@ export class CompressorTool {
     card.id = `card-${item.id}`;
 
     // Thumbnail URL from source image
-    const thumbUrl = item.imgData.img.src;
+    const thumbUrl = item.imgData.thumbUrl || item.imgData.objectUrl || item.imgData.img.src;
 
     card.innerHTML = `
       <div class="card-preview-box">
-        <img class="card-preview-img" src="${thumbUrl}" alt="${item.file.name}" loading="lazy" />
+        <img class="card-preview-img" src="${thumbUrl}" alt="${item.file.name}" />
         <span class="card-badge-status badge-${item.status}">${this.getStatusLabel(item.status)}</span>
       </div>
       <div class="card-body">
@@ -557,11 +557,20 @@ export class CompressorTool {
   }
 
   removeItem(id) {
+    const item = this.files.find((f) => f.id === id);
+    if (item && item.imgData && item.imgData.objectUrl) {
+      URL.revokeObjectURL(item.imgData.objectUrl);
+    }
     this.files = this.files.filter((f) => f.id !== id);
     this.updateUI();
   }
 
   clearAll() {
+    this.files.forEach((item) => {
+      if (item.imgData && item.imgData.objectUrl) {
+        URL.revokeObjectURL(item.imgData.objectUrl);
+      }
+    });
     this.files = [];
     this.updateUI();
     this.app.showToast('Cleared all files', 'info');
@@ -579,7 +588,7 @@ export class CompressorTool {
   openCompareModal(item) {
     if (!item.resultBlob || !this.compareModal) return;
 
-    const origUrl = item.imgData.img.src;
+    const origUrl = item.imgData.objectUrl || item.imgData.img.src;
     const compUrl = URL.createObjectURL(item.resultBlob);
 
     this.compareImgBefore.src = origUrl;

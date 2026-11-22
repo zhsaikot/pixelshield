@@ -51,9 +51,36 @@ export function loadImage(fileOrBlob) {
     const objectUrl = URL.createObjectURL(fileOrBlob);
 
     img.onload = () => {
-      URL.revokeObjectURL(objectUrl);
+      // Generate a fast, self-contained thumbnail data URL (max 360px) for indestructible previews
+      let thumbDataUrl = null;
+      try {
+        const thumbCanvas = document.createElement('canvas');
+        const maxThumbDim = 360;
+        let tw = img.naturalWidth || img.width;
+        let th = img.naturalHeight || img.height;
+        if (tw > maxThumbDim || th > maxThumbDim) {
+          if (tw > th) {
+            th = Math.round((th * maxThumbDim) / tw);
+            tw = maxThumbDim;
+          } else {
+            tw = Math.round((tw * maxThumbDim) / th);
+            th = maxThumbDim;
+          }
+        }
+        thumbCanvas.width = tw;
+        thumbCanvas.height = th;
+        const tctx = thumbCanvas.getContext('2d');
+        tctx.drawImage(img, 0, 0, tw, th);
+        const mime = fileOrBlob.type === 'image/png' ? 'image/png' : 'image/jpeg';
+        thumbDataUrl = thumbCanvas.toDataURL(mime, 0.85);
+      } catch (e) {
+        thumbDataUrl = objectUrl;
+      }
+
       resolve({
         img,
+        objectUrl,
+        thumbUrl: thumbDataUrl || objectUrl,
         width: img.naturalWidth || img.width,
         height: img.naturalHeight || img.height,
         name: fileOrBlob.name || 'image',
