@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <title>PixelSafe Studio — 100% Client-Side Privacy Image & Document Studio</title>
+  <meta name="description" content="100% private, client-side browser image processing: smart image compression, target-KB optimization, WebP/JPEG/PNG format conversion, EXIF metadata scrubbing, and passport/visa photo sheet generator. Your files never leave your device.">
+  <meta name="theme-color" content="#2563eb">
+  
+  <!-- Favicon (Inline SVG Data URI) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z'/></svg>">
+  <link rel="manifest" href="./manifest.json">
+
+  <!-- Inter Font from Google Fonts with fallback -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/style.css">
+
+  <!-- JSZip CDN for batch zip downloads -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-wrapper" title="Go to Home / Compressor">
+        <div class="brand-logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <span class="brand-title">PixelSafe Studio</span>
+          <span class="brand-subtitle">Private Media Lab</span>
+        </div>
+      </div>
+
+      <!-- Core Requirement: Privacy Badge -->
+      <div class="privacy-badge" title="All processing is executed strictly on your computer via HTML5 Canvas. Zero network requests.">
+        <span class="privacy-dot"></span>
+        <span class="badge-long-text">100% Local Processing — Your files never leave your device.</span>
+      </div>
+
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">
+          <!-- Populated by JS -->
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tab Bar -->
+  <nav class="nav-section" aria-label="Tool Navigation">
+    <div class="nav-container">
+      <button class="nav-tab-btn active" data-tab="compress" aria-selected="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="4 14 10 14 10 20"></polyline>
+          <polyline points="20 10 14 10 14 4"></polyline>
+          <line x1="14" y1="10" x2="21" y2="3"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+        <span>Smart Compressor</span>
+        <span class="tab-badge">Target-KB</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="convert" aria-selected="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <path d="M10 9l5 3-5 3V9z"></path>
+        </svg>
+        <span>Format &amp; EXIF Stripper</span>
+        <span class="tab-badge">WebP / JPG / PNG</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="passport" aria-selected="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+          <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"></rect>
+        </svg>
+        <span>Passport &amp; ID Studio</span>
+        <span class="tab-badge">Print Sheets</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Application Body -->
+  <main class="app-main">
+
+    <!-- =======================================================================
+         TOOL 1: SMART COMPRESSOR & TARGET-KB STUDIO
+         ======================================================================= -->
+    <section id="tab-compress" class="tab-pane active" aria-labelledby="tab-compress">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">Smart Compressor &amp; Target-KB Studio</h1>
+          <div class="pill-toggle-group">
+            <button id="compressor-mode-quality" class="pill-btn active">Quality &amp; Resize Mode</button>
+            <button id="compressor-mode-target" class="pill-btn">Target File Size (KB) Mode</button>
+          </div>
+        </div>
+        <p class="tool-description">
+          Compress high-resolution photos and assets right in your browser. Hit exact government portal size limits (e.g. 50 KB, 100 KB) with our 8-pass binary search algorithm.
+        </p>
+      </div>
+
+      <!-- Drag & Drop Upload Zone -->
+      <div id="compressor-dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload images for compression">
+        <input type="file" id="compressor-file-input" class="file-input-hidden" multiple accept="image/*">
+        <div class="dropzone-inner">
+          <div class="dropzone-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <div class="dropzone-heading">Drag &amp; drop multiple images here, or browse</div>
+          <div class="dropzone-subtext">Supports JPEG, PNG, WebP, GIF, BMP • Processed 100% in your browser</div>
+          <button type="button" class="dropzone-cta-btn">Select Images</button>
+        </div>
+      </div>
+
+      <!-- Controls Toolbar -->
+      <div class="toolbar-card">
+        <div class="toolbar-header">
+          <div class="toolbar-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            Compression Settings
+          </div>
+        </div>
+
+        <!-- Mode A: Quality & Dimensions -->
+        <div id="compressor-quality-controls" class="settings-grid">
+          <div class="setting-item">
+            <div class="setting-label">
+              <span>Compression Quality</span>
+              <span id="compressor-quality-val" class="setting-value-badge">80%</span>
+            </div>
+            <input type="range" id="compressor-quality-slider" class="range-slider" min="10" max="100" value="80">
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-label">
+              <span>Output Format</span>
+            </div>
+            <select id="compressor-format-select" class="select-dropdown">
+              <option value="image/jpeg">JPEG (Standard Web / Photos)</option>
+              <option value="image/webp">WebP (Modern High Efficiency)</option>
+              <option value="auto">Preserve Original Format</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-label">
+              <span>Resize Limits (Optional)</span>
+              <button id="compressor-aspect-lock-btn" class="btn btn-sm btn-ghost active" title="Aspect Ratio Locked" type="button">
+                🔒 Aspect Lock
+              </button>
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <input type="number" id="compressor-max-width" class="input-number" placeholder="Max Width (px)" min="50" max="10000">
+              <span style="color:var(--text-muted);">×</span>
+              <input type="number" id="compressor-max-height" class="input-number" placeholder="Max Height (px)" min="50" max="10000">
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode B: Target-KB Exact Match -->
+        <div id="compressor-target-controls" class="settings-grid" style="display:none;">
+          <div class="setting-item">
+            <div class="setting-label">
+              <span>Target Maximum File Size</span>
+              <span class="setting-value-badge">Strict Upper Bound</span>
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <input type="number" id="compressor-target-kb-input" class="input-number" value="100" min="10" max="25000">
+              <span style="font-weight:700; color:var(--text-secondary);">KB</span>
+            </div>
+            <div class="chips-container">
+              <button type="button" class="chip-btn target-kb-chip" data-kb="50">50 KB</button>
+              <button type="button" class="chip-btn target-kb-chip active" data-kb="100">100 KB</button>
+              <button type="button" class="chip-btn target-kb-chip" data-kb="200">200 KB</button>
+              <button type="button" class="chip-btn target-kb-chip" data-kb="500">500 KB</button>
+              <button type="button" class="chip-btn target-kb-chip" data-kb="1024">1 MB</button>
+            </div>
+          </div>
+
+          <div class="setting-item" style="justify-content:center;">
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4;">
+              ⚡ <strong>8-Pass Binary Search Engine:</strong> Recursively balances quality compression and visual dimension scaling to guarantee the file stays under your requested limit without corrupting aspect ratio.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Actions Bar -->
+      <div id="compressor-batch-actions" class="batch-actions-bar" style="display:none;">
+        <div class="batch-stats">
+          <span id="compressor-batch-count">0 files</span>
+          <span>•</span>
+          <span id="compressor-batch-savings"></span>
+        </div>
+        <div class="btn-group">
+          <button id="compressor-compress-all-btn" class="btn btn-outline btn-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+              <path d="M16 21h5v-5"></path>
+            </svg>
+            Re-Compress All
+          </button>
+          <button id="compressor-download-zip-btn" class="btn btn-primary btn-sm" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download All as ZIP
+          </button>
+          <button id="compressor-clear-all-btn" class="btn btn-danger-ghost btn-sm">Clear All</button>
+        </div>
+      </div>
+
+      <!-- Image Cards Grid -->
+      <div id="compressor-cards-grid" class="cards-grid" style="display:none;"></div>
+
+      <!-- Empty State -->
+      <div id="compressor-empty-state" class="empty-state">
+        <div class="empty-state-icon">📸</div>
+        <h3>No images loaded yet</h3>
+        <p>Drop photos above or choose files to start optimizing.</p>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         TOOL 2: FORMAT CONVERTER & EXIF STRIPPER
+         ======================================================================= -->
+    <section id="tab-convert" class="tab-pane" aria-labelledby="tab-convert">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">Format Converter &amp; EXIF Stripper</h1>
+        </div>
+        <p class="tool-description">
+          Convert images between WebP, JPEG, and PNG while thoroughly scrubbing privacy-leaking EXIF metadata, GPS geotags, camera serial numbers, and timestamps.
+        </p>
+      </div>
+
+      <!-- Dropzone -->
+      <div id="converter-dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload images for format conversion and EXIF stripping">
+        <input type="file" id="converter-file-input" class="file-input-hidden" multiple accept="image/*">
+        <div class="dropzone-inner">
+          <div class="dropzone-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="M12 8v4"></path>
+              <path d="M12 16h.01"></path>
+            </svg>
+          </div>
+          <div class="dropzone-heading">Drop images here to convert &amp; sanitize</div>
+          <div class="dropzone-subtext">Automatic EXIF scrubbing removes GPS location, camera model, and dates</div>
+          <button type="button" class="dropzone-cta-btn">Choose Images</button>
+        </div>
+      </div>
+
+      <!-- Converter Settings Toolbar -->
+      <div class="toolbar-card">
+        <div class="toolbar-header">
+          <div class="toolbar-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 3 21 3 21 8"></polyline>
+              <line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <line x1="4" y1="4" x2="9" y2="9"></line>
+            </svg>
+            Conversion &amp; Privacy Settings
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="setting-item">
+            <div class="setting-label">Target Format</div>
+            <select id="converter-target-format" class="select-dropdown">
+              <option value="image/webp" selected>WebP (Best Compression &amp; Speed)</option>
+              <option value="image/jpeg">JPEG (Universal Compatibility)</option>
+              <option value="image/png">PNG (Lossless &amp; Alpha Transparency)</option>
+            </select>
+          </div>
+
+          <div id="converter-quality-group" class="setting-item">
+            <div class="setting-label">
+              <span>Quality Factor</span>
+              <span id="converter-quality-val" class="setting-value-badge">90%</span>
+            </div>
+            <input type="range" id="converter-quality-slider" class="range-slider" min="10" max="100" value="90">
+          </div>
+
+          <div id="converter-bg-fill-group" class="setting-item" style="display:none;">
+            <div class="setting-label">Background Fill (for JPEG)</div>
+            <div class="color-swatches-group">
+              <button type="button" class="color-swatch-btn bg-swatch-btn active" data-color="#ffffff" style="background:#ffffff;" title="White"></button>
+              <button type="button" class="color-swatch-btn bg-swatch-btn swatch-dark" data-color="#000000" style="background:#000000;" title="Black"></button>
+              <button type="button" class="color-swatch-btn bg-swatch-btn" data-color="#f3f4f6" style="background:#f3f4f6;" title="Light Grey"></button>
+              <input type="color" id="converter-bg-color-picker" value="#ffffff" title="Custom Color" style="width:32px; height:32px; border:none; background:transparent; cursor:pointer;">
+            </div>
+          </div>
+
+          <div class="setting-item" style="justify-content:center;">
+            <label class="toggle-switch-label">
+              <input type="checkbox" id="converter-strip-exif-switch" class="switch-input" checked>
+              <span><strong>Strip EXIF &amp; Geotags</strong> (Purges GPS, camera &amp; time data)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Actions Bar -->
+      <div id="converter-batch-actions" class="batch-actions-bar" style="display:none;">
+        <div class="batch-stats">
+          <span id="converter-batch-count">0 files</span>
+          <span>•</span>
+          <span id="converter-batch-savings"></span>
+        </div>
+        <div class="btn-group">
+          <button id="converter-convert-all-btn" class="btn btn-outline btn-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+              <path d="M16 21h5v-5"></path>
+            </svg>
+            Re-Convert All
+          </button>
+          <button id="converter-download-zip-btn" class="btn btn-primary btn-sm" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download All as ZIP
+          </button>
+          <button id="converter-clear-all-btn" class="btn btn-danger-ghost btn-sm">Clear All</button>
+        </div>
+      </div>
+
+      <!-- Image Cards Grid -->
+      <div id="converter-cards-grid" class="cards-grid" style="display:none;"></div>
+
+      <!-- Empty State -->
+      <div id="converter-empty-state" class="empty-state">
+        <div class="empty-state-icon">🛡️</div>
+        <h3>No images in conversion queue</h3>
+        <p>Drop images above to strip metadata and convert formats.</p>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         TOOL 3: ID & PASSPORT PHOTO SHEET MAKER
+         ======================================================================= -->
+    <section id="tab-passport" class="tab-pane" aria-labelledby="tab-passport">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">ID &amp; Passport Photo Studio</h1>
+        </div>
+        <p class="tool-description">
+          Create official standard passport photos, visa headshots, and printable 4×6" or A4 photo sheets tiled with precise cut-guide borders — 100% locally.
+        </p>
+      </div>
+
+      <!-- Initial Dropzone -->
+      <div id="passport-dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload portrait photo">
+        <input type="file" id="passport-file-input" class="file-input-hidden" accept="image/*">
+        <div class="dropzone-inner">
+          <div class="dropzone-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="dropzone-heading">Drop your portrait or selfie here</div>
+          <div class="dropzone-subtext">Align with biometric guidelines and generate high-res printable sheets</div>
+          <button type="button" class="dropzone-cta-btn">Choose Portrait</button>
+        </div>
+      </div>
+
+      <!-- Studio Interactive Workspace (Visible after image loaded) -->
+      <div id="passport-workspace" class="passport-studio-layout" style="display:none;">
+        
+        <!-- Left Column: Interactive Canvas & Pan/Zoom Controls -->
+        <div class="passport-canvas-workspace">
+          <div class="canvas-viewport-container" id="passport-canvas-container" title="Click and drag to pan / scroll wheel to zoom">
+            <canvas id="passport-editor-canvas"></canvas>
+          </div>
+
+          <!-- Studio Viewport Controls -->
+          <div class="canvas-controls-bar">
+            <div class="zoom-pan-controls">
+              <span style="font-size:0.8rem; font-weight:600; color:var(--text-secondary);">Zoom:</span>
+              <input type="range" id="passport-zoom-slider" class="range-slider" min="0.5" max="3.0" step="0.05" value="1.0">
+              <span id="passport-zoom-val" class="setting-value-badge">100%</span>
+            </div>
+
+            <div class="zoom-pan-controls">
+              <span style="font-size:0.8rem; font-weight:600; color:var(--text-secondary);">Straighten:</span>
+              <input type="range" id="passport-rotate-slider" class="range-slider" min="-45" max="45" step="1" value="0">
+              <span id="passport-rotate-val" class="setting-value-badge">0°</span>
+            </div>
+
+            <div class="btn-group">
+              <button id="passport-flip-btn" class="btn btn-sm btn-outline" title="Flip horizontally">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h3m8-18h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3"></path>
+                  <line x1="12" y1="2" x2="12" y2="22"></line>
+                </svg>
+                Flip
+              </button>
+              <button id="passport-reset-btn" class="btn btn-sm btn-ghost" title="Reset pan & zoom">
+                Reset
+              </button>
+              <button id="passport-change-photo-btn" class="btn btn-sm btn-outline" title="Select another portrait">
+                Change Photo
+              </button>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <label class="toggle-switch-label">
+              <input type="checkbox" id="passport-guides-toggle" class="switch-input" checked>
+              <span><strong>Biometric Guides:</strong> Show face oval, eye line &amp; chin target</span>
+            </label>
+            <span style="font-size:0.8rem; color:var(--text-muted);">💡 Tip: Click and drag canvas to center your face</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Settings & Sheet Generation -->
+        <div class="passport-sidebar-panel">
+          
+          <!-- Presets & Studio Background -->
+          <div class="toolbar-card" style="margin-bottom:0;">
+            <div class="setting-item" style="margin-bottom:1rem;">
+              <label class="setting-label" for="passport-preset-select">ID / Passport Preset</label>
+              <select id="passport-preset-select" class="select-dropdown">
+                <option value="passport-35-45">35 × 45 mm (Standard Passport / Schengen / UK / Global)</option>
+                <option value="visa-2-2">2 × 2 inch (US Passport &amp; Visa / India Visa)</option>
+                <option value="portal-300-300">300 × 300 px (Digital Portal / Profile / Application)</option>
+                <option value="japan-35-35">35 × 35 mm (Japan / Asian ID)</option>
+                <option value="canada-50-70">50 × 70 mm (Canadian Passport)</option>
+              </select>
+            </div>
+
+            <div class="setting-item" style="margin-bottom:1.25rem;">
+              <label class="setting-label">Studio Background Color</label>
+              <div class="color-swatches-group">
+                <button type="button" class="color-swatch-btn passport-bg-swatch active" data-color="#ffffff" style="background:#ffffff;" title="Pure White (US/EU/Global Standard)"></button>
+                <button type="button" class="color-swatch-btn passport-bg-swatch" data-color="#f3f4f6" style="background:#f3f4f6;" title="Off-White / Soft Grey"></button>
+                <button type="button" class="color-swatch-btn passport-bg-swatch" data-color="#cbe3f7" style="background:#cbe3f7;" title="Light Blue (Asian & Arab Passports)"></button>
+                <button type="button" class="color-swatch-btn passport-bg-swatch" data-color="original" style="background:repeating-linear-gradient(45deg,#ccc,#ccc 4px,#fff 4px,#fff 8px);" title="Original Background"></button>
+              </div>
+            </div>
+
+            <!-- Single Photo Action -->
+            <button id="passport-download-single-btn" class="btn btn-outline" style="width:100%;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download Single Digital Photo (300 DPI)
+            </button>
+          </div>
+
+          <!-- Sheet Tiling Generator -->
+          <div class="sheet-preview-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700; font-size:0.95rem;">Printable Photo Sheet</span>
+              <span id="passport-sheet-count-badge" class="badge" style="background:var(--accent-primary-subtle); color:var(--accent-primary); font-size:0.75rem; font-weight:700;">8 photos on 4×6"</span>
+            </div>
+
+            <div class="sheet-preview-canvas-box">
+              <canvas id="passport-sheet-canvas"></canvas>
+            </div>
+
+            <div class="setting-item">
+              <label class="setting-label" for="passport-sheet-paper">Paper Size</label>
+              <select id="passport-sheet-paper" class="select-dropdown">
+                <option value="4x6">4 × 6 inch (Standard Photo Paper)</option>
+                <option value="a4">A4 (210 × 297 mm Document Paper)</option>
+                <option value="5x7">5 × 7 inch Photo Paper</option>
+              </select>
+            </div>
+
+            <label class="toggle-switch-label" style="font-size:0.82rem;">
+              <input type="checkbox" id="passport-cut-guides-toggle" class="switch-input" checked>
+              <span>Include subtle cut-guide lines &amp; corner marks</span>
+            </label>
+
+            <button id="passport-download-sheet-btn" class="btn btn-primary btn-lg" style="width:100%;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              Download Printable Sheet (300 DPI)
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- EXIF / Metadata Inspection Modal Dialog -->
+  <div id="exif-modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="exif-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="exif-modal-title" class="modal-title">Metadata Inspector</h3>
+        <button id="exif-modal-close" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <table class="metadata-table">
+          <tbody id="exif-modal-tbody">
+            <!-- Populated dynamically by converter-exif.js -->
+          </tbody>
+        </table>
+        <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4;">
+          🔒 <strong>Zero-Trace Guarantee:</strong> When saving with PixelSafe Studio, the file is re-rendered into raw bitmap canvas memory. All proprietary metadata headers (APP1, EXIF, XMP, GPS coordinates, serial numbers) are dropped.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- App Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--color-success)">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <polyline points="9 12 11 14 15 10"></polyline>
+        </svg>
+        <span><strong>100% Client-Side Privacy:</strong> Zero files or telemetry sent to any server. Completely offline-capable.</span>
+      </div>
+      <div style="font-size:0.82rem; color:var(--text-muted);">
+        PixelSafe Studio • HTML5 Canvas &amp; Vanilla ES6+
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main ES6 Application Entrypoint -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

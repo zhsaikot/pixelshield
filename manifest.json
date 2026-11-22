@@ -1,0 +1,17 @@
+{
+  "name": "PixelSafe Studio - Privacy Image & Document Studio",
+  "short_name": "PixelSafe",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "description": "100% Client-Side Privacy Image & Document Studio. Compress images, hit exact target KB limits, convert WebP/JPEG/PNG formats, scrub EXIF metadata, and generate official passport & visa photo sheets locally in your browser.",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%232563eb'><rect width='512' height='512' rx='128' fill='%232563eb'/><path d='M256 64L96 128v128c0 118.4 81.9 229.1 160 256 78.1-26.9 160-137.6 160-256V128L256 64zm-32 304l-80-80 28.3-28.3L224 311.4l147.7-147.7 28.3 28.3L224 368z' fill='white'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
