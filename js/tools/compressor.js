@@ -450,7 +450,15 @@ export class CompressorTool {
       this.app.showToast(`Added ${loadedCount} image${loadedCount > 1 ? 's' : ''}`, 'success');
       this.updateUI();
       this.processAll();
+      this.scrollToPreview();
     }
+  }
+
+  scrollToPreview() {
+    if (!this.stageWrap) return;
+    setTimeout(() => {
+      this.stageWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
   }
 
   triggerDebouncedBatchProcess() {
@@ -685,6 +693,7 @@ export class CompressorTool {
         this.filmstripTrack.querySelectorAll('.filmstrip-thumb').forEach((t) => t.classList.remove('active'));
         thumb.classList.add('active');
         this.updateStageActiveView();
+        this.scrollToPreview();
       });
       this.filmstripTrack.appendChild(thumb);
     });
@@ -757,7 +766,7 @@ export class CompressorTool {
       this.activeFileId = item.id;
       this.updateStageActiveView();
       this.updateFilmstrip();
-      this.openCompareModal(item);
+      this.scrollToPreview();
     });
 
     const downloadBtn = card.querySelector('.download-btn');

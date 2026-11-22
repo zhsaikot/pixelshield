@@ -173,6 +173,9 @@ export class AssetGeneratorTool {
       this.faviconWorkspace.style.display = 'block';
 
       await this.generateFavicons();
+      setTimeout(() => {
+        if (this.faviconWorkspace) this.faviconWorkspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
       this.app.showToast(`Generated icon suite from ${file.name}`, 'success');
     } catch (err) {
       console.error('Favicon load error:', err);
@@ -270,6 +273,9 @@ export class AssetGeneratorTool {
       this.socialWorkspace.style.display = 'grid';
 
       this.renderSocialAsset();
+      setTimeout(() => {
+        if (this.socialWorkspace) this.socialWorkspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
       this.app.showToast(`Loaded ${file.name}`, 'success');
     } catch (err) {
       this.app.showToast(`Could not load image: ${err.message}`, 'error');

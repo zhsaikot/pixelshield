@@ -196,6 +196,10 @@ export class ConverterExifTool {
       this.app.showToast(`Added ${loadedCount} image${loadedCount > 1 ? 's' : ''}`, 'success');
       this.updateUI();
       this.processAll();
+      setTimeout(() => {
+        const target = this.batchActionsBar || this.cardsContainer;
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
     }
   }
 

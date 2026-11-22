@@ -361,6 +361,10 @@ export class SignatureMakerTool {
         file
       };
       this.renderSignaturePreview();
+      setTimeout(() => {
+        const previewBox = document.querySelector('.signature-preview-box');
+        if (previewBox) previewBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 120);
       this.app.showToast(`Loaded ${file.name}`, 'success');
     } catch (err) {
       this.app.showToast(`Failed to load signature: ${err.message}`, 'error');
@@ -468,6 +472,9 @@ export class SignatureMakerTool {
       this.wmDropzone.style.display = 'none';
       this.wmWorkspace.style.display = 'grid';
       this.renderWatermark();
+      setTimeout(() => {
+        if (this.wmWorkspace) this.wmWorkspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
       this.app.showToast(`Loaded ${file.name}`, 'success');
     } catch (err) {
       this.app.showToast(`Could not load image: ${err.message}`, 'error');

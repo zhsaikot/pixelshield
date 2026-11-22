@@ -161,6 +161,9 @@ export class RedactorTool {
       this.workspace.style.display = 'flex';
 
       this.resetImage();
+      setTimeout(() => {
+        if (this.workspace) this.workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
       this.app.showToast(`Loaded ${file.name}`, 'success');
     } catch (err) {
       console.error('Redactor image load error:', err);

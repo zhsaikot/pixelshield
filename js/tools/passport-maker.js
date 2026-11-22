@@ -336,6 +336,9 @@ export class PassportMakerTool {
       this.workspace.style.display = 'grid';
 
       this.resetTransform();
+      setTimeout(() => {
+        if (this.workspace) this.workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
       this.app.showToast(`Loaded portrait: ${file.name}`, 'success');
     } catch (err) {
       console.error('Portrait load error:', err);

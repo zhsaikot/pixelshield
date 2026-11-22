@@ -135,6 +135,10 @@ export class ImageToPdfTool {
     if (addedCount > 0) {
       this.app.showToast(`Added ${addedCount} page${addedCount > 1 ? 's' : ''}`, 'success');
       this.renderPages();
+      setTimeout(() => {
+        const target = this.batchActionsBar || this.pagesGrid;
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
     }
   }
 
