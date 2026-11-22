@@ -82,9 +82,13 @@ export class App {
 
   initStudioShell() {
     this.studioShell = document.getElementById('studio-shell');
+    this.studioMainCol = document.querySelector('.studio-main-col');
     this.sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    this.mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    this.sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+    this.sidebarBackdrop = document.getElementById('sidebar-backdrop');
     
-    // Restore collapsed state
+    // Restore collapsed state (desktop)
     const isCollapsed = localStorage.getItem('pixelshield_sidebar_collapsed') === 'true';
     if (isCollapsed && this.studioShell) {
       this.studioShell.classList.add('sidebar-collapsed');
@@ -94,6 +98,25 @@ export class App {
       this.sidebarToggleBtn.addEventListener('click', () => {
         const collapsed = this.studioShell.classList.toggle('sidebar-collapsed');
         localStorage.setItem('pixelshield_sidebar_collapsed', collapsed.toString());
+      });
+    }
+
+    // Mobile Drawer Navigation
+    if (this.mobileMenuBtn && this.studioShell) {
+      this.mobileMenuBtn.addEventListener('click', () => {
+        this.studioShell.classList.toggle('sidebar-mobile-open');
+      });
+    }
+
+    if (this.sidebarCloseBtn && this.studioShell) {
+      this.sidebarCloseBtn.addEventListener('click', () => {
+        this.studioShell.classList.remove('sidebar-mobile-open');
+      });
+    }
+
+    if (this.sidebarBackdrop && this.studioShell) {
+      this.sidebarBackdrop.addEventListener('click', () => {
+        this.studioShell.classList.remove('sidebar-mobile-open');
       });
     }
 
@@ -188,8 +211,16 @@ export class App {
       setTimeout(() => this.syncAllSliders(), 40);
     }
 
+    // Close mobile drawer on navigation
+    if (this.studioShell) {
+      this.studioShell.classList.remove('sidebar-mobile-open');
+    }
+
     // Scroll to top of page gently
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.studioMainCol) {
+      this.studioMainCol.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   initSlidersSystem() {
@@ -512,9 +543,10 @@ export class App {
         return;
       }
 
-      // Escape closes any open modals
+      // Escape closes any open modals and mobile sidebar
       if (e.key === 'Escape') {
         this.closeCommandPalette();
+        if (this.studioShell) this.studioShell.classList.remove('sidebar-mobile-open');
         const activeModal = document.querySelector('.modal-backdrop.active');
         if (activeModal) {
           activeModal.classList.remove('active');
