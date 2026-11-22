@@ -53,6 +53,13 @@ export class CompressorTool {
     this.maxWidthInput = document.getElementById('compressor-max-width');
     this.maxHeightInput = document.getElementById('compressor-max-height');
     this.aspectLockBtn = document.getElementById('compressor-aspect-lock-btn');
+    if (this.qualitySlider) {
+      const min = parseInt(this.qualitySlider.min, 10) || 0;
+      const max = parseInt(this.qualitySlider.max, 10) || 100;
+      const val = parseInt(this.qualitySlider.value, 10) || 80;
+      const pct = ((val - min) / (max - min)) * 100;
+      this.qualitySlider.style.setProperty('--range-progress', `${pct}%`);
+    }
 
     // Target KB controls
     this.targetKBInput = document.getElementById('compressor-target-kb-input');
@@ -121,6 +128,10 @@ export class CompressorTool {
       const val = parseInt(e.target.value, 10);
       this.quality = val / 100;
       this.qualityValBadge.textContent = `${val}%`;
+      const min = parseInt(e.target.min, 10) || 0;
+      const max = parseInt(e.target.max, 10) || 100;
+      const pct = ((val - min) / (max - min)) * 100;
+      e.target.style.setProperty('--range-progress', `${pct}%`);
       this.triggerDebouncedBatchProcess();
     });
 
@@ -146,7 +157,15 @@ export class CompressorTool {
       this.aspectLockBtn.addEventListener('click', () => {
         this.aspectRatioLocked = !this.aspectRatioLocked;
         this.aspectLockBtn.classList.toggle('active', this.aspectRatioLocked);
+        this.aspectLockBtn.setAttribute('aria-pressed', this.aspectRatioLocked ? 'true' : 'false');
         this.aspectLockBtn.title = this.aspectRatioLocked ? 'Aspect Ratio Locked' : 'Aspect Ratio Unlocked';
+        const lockIcon = this.aspectLockBtn.querySelector('.lock-icon.locked');
+        const unlockIcon = this.aspectLockBtn.querySelector('.lock-icon.unlocked');
+        if (lockIcon && unlockIcon) {
+          lockIcon.style.display = this.aspectRatioLocked ? 'inline-block' : 'none';
+          unlockIcon.style.display = this.aspectRatioLocked ? 'none' : 'inline-block';
+        }
+        this.triggerDebouncedBatchProcess();
       });
     }
 
@@ -231,16 +250,19 @@ export class CompressorTool {
 
   setMode(mode) {
     this.mode = mode;
+    const modeLabel = document.getElementById('compressor-active-mode-label');
     if (mode === 'quality') {
       this.modeQualityBtn.classList.add('active');
       this.modeTargetBtn.classList.remove('active');
       this.qualityControlsSection.style.display = 'grid';
       this.targetControlsSection.style.display = 'none';
+      if (modeLabel) modeLabel.textContent = 'Quality Mode Active';
     } else {
       this.modeTargetBtn.classList.add('active');
       this.modeQualityBtn.classList.remove('active');
       this.qualityControlsSection.style.display = 'none';
       this.targetControlsSection.style.display = 'grid';
+      if (modeLabel) modeLabel.textContent = `Target KB Active (${this.targetKB} KB)`;
     }
     this.triggerDebouncedBatchProcess();
   }
@@ -250,6 +272,10 @@ export class CompressorTool {
       const chipKB = parseInt(chip.dataset.kb, 10);
       chip.classList.toggle('active', chipKB === kb);
     });
+    const modeLabel = document.getElementById('compressor-active-mode-label');
+    if (this.mode === 'target-kb' && modeLabel) {
+      modeLabel.textContent = `Target KB Active (${kb} KB)`;
+    }
   }
 
   async handleFiles(fileList) {

@@ -19,6 +19,7 @@ class App {
 
     this.initTheme();
     this.initNavigation();
+    this.initSlidersSystem();
     this.initToastSystem();
     this.initTools();
     this.bindGlobalEvents();
@@ -112,8 +113,39 @@ class App {
       pane.classList.toggle('active', isTarget);
     });
 
+    // Sync range sliders in active pane
+    if (this.syncAllSliders) {
+      setTimeout(() => this.syncAllSliders(), 40);
+    }
+
     // Scroll to top of page gently
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  initSlidersSystem() {
+    const syncSlider = (slider) => {
+      if (!slider) return;
+      const min = parseFloat(slider.min !== '' ? slider.min : '0');
+      const max = parseFloat(slider.max !== '' ? slider.max : '100');
+      const val = parseFloat(slider.value !== '' ? slider.value : '0');
+      const range = max - min;
+      const pct = range <= 0 ? 0 : Math.max(0, Math.min(100, ((val - min) / range) * 100));
+      slider.style.setProperty('--range-progress', `${pct.toFixed(2)}%`);
+    };
+
+    // Initial sync of all range sliders
+    document.querySelectorAll('input[type="range"].range-slider').forEach(syncSlider);
+
+    // Global listener for real-time smooth updates on any range slider in the app
+    document.addEventListener('input', (e) => {
+      if (e.target && e.target.matches && e.target.matches('input[type="range"].range-slider')) {
+        syncSlider(e.target);
+      }
+    });
+
+    this.syncAllSliders = () => {
+      document.querySelectorAll('input[type="range"].range-slider').forEach(syncSlider);
+    };
   }
 
   initToastSystem() {

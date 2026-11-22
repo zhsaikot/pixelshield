@@ -181,61 +181,106 @@
       <!-- Controls Toolbar -->
       <div class="toolbar-card">
         <div class="toolbar-header">
-          <div class="toolbar-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-            Compression Settings
+          <div class="toolbar-title-wrap">
+            <div class="toolbar-icon-squircle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </div>
+            <div>
+              <div class="toolbar-title">Compression Parameters</div>
+              <div class="toolbar-subtitle">Fine-tune image quality, output format, and scale constraints</div>
+            </div>
+          </div>
+          <div class="toolbar-status-badge">
+            <span class="status-pulse-dot"></span>
+            <span id="compressor-active-mode-label">Quality Mode Active</span>
           </div>
         </div>
 
         <!-- Mode A: Quality & Dimensions -->
         <div id="compressor-quality-controls" class="settings-grid">
-          <div class="setting-item">
+          <!-- Item 1: Compression Quality Slider -->
+          <div class="setting-item setting-box">
             <div class="setting-label">
-              <span>Compression Quality</span>
+              <span class="setting-title">Compression Quality</span>
               <span id="compressor-quality-val" class="setting-value-badge">80%</span>
             </div>
-            <input type="range" id="compressor-quality-slider" class="range-slider" min="10" max="100" value="80">
+            <div class="slider-wrapper">
+              <input type="range" id="compressor-quality-slider" class="range-slider" min="10" max="100" value="80">
+            </div>
+            <div class="slider-ticks-row">
+              <span>10% Smallest</span>
+              <span>Balanced (80%)</span>
+              <span>100% Crisp</span>
+            </div>
           </div>
 
-          <div class="setting-item">
+          <!-- Item 2: Output Format -->
+          <div class="setting-item setting-box">
             <div class="setting-label">
-              <span>Output Format</span>
+              <span class="setting-title">Output Format</span>
+              <span class="format-pill-tag">Canvas Engine</span>
             </div>
             <select id="compressor-format-select" class="select-dropdown">
               <option value="image/jpeg">JPEG (Standard Web / Photos)</option>
               <option value="image/webp">WebP (Modern High Efficiency)</option>
               <option value="auto">Preserve Original Format</option>
             </select>
+            <div class="setting-helper-caption">WebP delivers ~30% higher savings; JPEG guarantees universal support.</div>
           </div>
 
-          <div class="setting-item">
+          <!-- Item 3: Resize Limits & Aspect Lock -->
+          <div class="setting-item setting-box">
             <div class="setting-label">
-              <span>Resize Limits (Optional)</span>
-              <button id="compressor-aspect-lock-btn" class="btn btn-sm btn-ghost active" title="Aspect Ratio Locked" type="button">
-                🔒 Aspect Lock
+              <span class="setting-title">Resize Limits (Optional)</span>
+              <button id="compressor-aspect-lock-btn" class="aspect-lock-pill active" title="Aspect Ratio Locked" type="button" aria-pressed="true">
+                <svg class="lock-icon locked" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <svg class="lock-icon unlocked" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                </svg>
+                <span>Lock Ratio</span>
               </button>
             </div>
-            <div style="display:flex; gap:0.5rem; align-items:center;">
-              <input type="number" id="compressor-max-width" class="input-number" placeholder="Max Width (px)" min="50" max="10000">
-              <span style="color:var(--text-muted); font-size:0.8rem;">×</span>
-              <input type="number" id="compressor-max-height" class="input-number" placeholder="Max Height (px)" min="50" max="10000">
+            <div class="dimension-input-group">
+              <div class="dimension-field">
+                <span class="dim-badge">W</span>
+                <input type="number" id="compressor-max-width" class="input-dim" placeholder="Auto" min="50" max="10000">
+                <span class="dim-unit">px</span>
+              </div>
+              <span class="dim-separator">×</span>
+              <div class="dimension-field">
+                <span class="dim-badge">H</span>
+                <input type="number" id="compressor-max-height" class="input-dim" placeholder="Auto" min="50" max="10000">
+                <span class="dim-unit">px</span>
+              </div>
             </div>
+            <div class="setting-helper-caption">Preserves original camera aspect ratio automatically when locked.</div>
           </div>
         </div>
 
         <!-- Mode B: Target-KB Exact Match -->
         <div id="compressor-target-controls" class="settings-grid" style="display:none;">
-          <div class="setting-item">
+          <div class="setting-item setting-box">
             <div class="setting-label">
-              <span>Target Maximum File Size</span>
+              <span class="setting-title">Target Maximum File Size</span>
               <span class="setting-value-badge">Strict Upper Bound</span>
             </div>
-            <div style="display:flex; gap:0.5rem; align-items:center;">
-              <input type="number" id="compressor-target-kb-input" class="input-number" value="100" min="10" max="25000">
-              <span style="font-weight:600; font-size:0.82rem; color:var(--text-secondary);">KB</span>
+            <div class="dimension-field" style="max-width:180px;">
+              <input type="number" id="compressor-target-kb-input" class="input-dim" value="100" min="10" max="25000">
+              <span class="dim-unit" style="font-weight:700;">KB</span>
             </div>
             <div class="chips-container">
               <button type="button" class="chip-btn target-kb-chip" data-kb="50">50 KB</button>
@@ -246,13 +291,18 @@
             </div>
           </div>
 
-          <div class="setting-item">
-            <details class="info-details" style="margin-top:0.25rem;">
-              <summary>How 8-Pass Binary Search works</summary>
-              <p>
-                Iteratively tests compression qualities between 5% and 98% in binary steps. If minimum quality still exceeds the requested KB, it applies progressive proportional downscaling to strictly keep file size under the cap while preserving visual aspect ratio.
-              </p>
-            </details>
+          <div class="setting-item setting-box" style="justify-content:center;">
+            <div class="target-engine-badge">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <span>8-Pass Logarithmic Binary Search</span>
+            </div>
+            <p class="target-engine-text">
+              Guarantees files strictly stay under portal upload limits. If minimum compression quality still exceeds the cap, progressive proportional downscaling is safely applied.
+            </p>
           </div>
         </div>
       </div>
@@ -337,51 +387,70 @@
       <!-- Converter Settings Toolbar -->
       <div class="toolbar-card">
         <div class="toolbar-header">
-          <div class="toolbar-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="16 3 21 3 21 8"></polyline>
-              <line x1="4" y1="20" x2="21" y2="3"></line>
-              <polyline points="21 16 21 21 16 21"></polyline>
-              <line x1="15" y1="15" x2="21" y2="21"></line>
-              <line x1="4" y1="4" x2="9" y2="9"></line>
-            </svg>
-            Conversion &amp; Privacy Settings
+          <div class="toolbar-title-wrap">
+            <div class="toolbar-icon-squircle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 3 21 3 21 8"></polyline>
+                <line x1="4" y1="20" x2="21" y2="3"></line>
+                <polyline points="21 16 21 21 16 21"></polyline>
+                <line x1="15" y1="15" x2="21" y2="21"></line>
+                <line x1="4" y1="4" x2="9" y2="9"></line>
+              </svg>
+            </div>
+            <div>
+              <div class="toolbar-title">Conversion &amp; Privacy Parameters</div>
+              <div class="toolbar-subtitle">Target format encoding, alpha background fill, and EXIF purge</div>
+            </div>
           </div>
         </div>
 
         <div class="settings-grid">
-          <div class="setting-item">
-            <div class="setting-label">Target Format</div>
+          <div class="setting-item setting-box">
+            <div class="setting-label">
+              <span class="setting-title">Target Format</span>
+            </div>
             <select id="converter-target-format" class="select-dropdown">
               <option value="image/webp" selected>WebP (Best Compression &amp; Speed)</option>
               <option value="image/jpeg">JPEG (Universal Compatibility)</option>
               <option value="image/png">PNG (Lossless &amp; Alpha Transparency)</option>
             </select>
+            <div class="setting-helper-caption">Client-side pixel redrawing cleanly strips all metadata.</div>
           </div>
 
-          <div id="converter-quality-group" class="setting-item">
+          <div id="converter-quality-group" class="setting-item setting-box">
             <div class="setting-label">
-              <span>Quality Factor</span>
+              <span class="setting-title">Quality Factor</span>
               <span id="converter-quality-val" class="setting-value-badge">90%</span>
             </div>
-            <input type="range" id="converter-quality-slider" class="range-slider" min="10" max="100" value="90">
+            <div class="slider-wrapper">
+              <input type="range" id="converter-quality-slider" class="range-slider" min="10" max="100" value="90">
+            </div>
+            <div class="slider-ticks-row">
+              <span>10% Low</span>
+              <span>Default (90%)</span>
+              <span>100% Max</span>
+            </div>
           </div>
 
-          <div id="converter-bg-fill-group" class="setting-item" style="display:none;">
-            <div class="setting-label">Background Fill (for JPEG)</div>
+          <div id="converter-bg-fill-group" class="setting-item setting-box" style="display:none;">
+            <div class="setting-label">
+              <span class="setting-title">Background Fill (for JPEG)</span>
+            </div>
             <div class="color-swatches-group">
               <button type="button" class="color-swatch-btn bg-swatch-btn active" data-color="#ffffff" style="background:#ffffff;" title="White"></button>
               <button type="button" class="color-swatch-btn bg-swatch-btn swatch-dark" data-color="#000000" style="background:#000000;" title="Black"></button>
               <button type="button" class="color-swatch-btn bg-swatch-btn" data-color="#f3f4f6" style="background:#f3f4f6;" title="Light Grey"></button>
               <input type="color" id="converter-bg-color-picker" value="#ffffff" title="Custom Color" style="width:28px; height:28px; border:none; background:transparent; cursor:pointer;">
             </div>
+            <div class="setting-helper-caption">Fills transparent pixels when converting to JPEG.</div>
           </div>
 
-          <div class="setting-item" style="justify-content:center;">
+          <div class="setting-item setting-box" style="justify-content:center;">
             <label class="toggle-switch-label">
               <input type="checkbox" id="converter-strip-exif-switch" class="switch-input" checked>
               <span><strong>Strip EXIF &amp; Geotags</strong> (Purges GPS, camera &amp; time data)</span>
             </label>
+            <div class="setting-helper-caption">Renders clean canvas buffer free of embedded metadata.</div>
           </div>
         </div>
       </div>
