@@ -1,6 +1,11 @@
 /**
  * ============================================================================
  * Tool 1: Smart Compressor & Target-KB Studio
+ * Desktop-Grade PixorAI Studio Integration:
+ * - Central Split Before/After Stage Canvas
+ * - Floating Frosted Export Dock with Scale & Format Selectors
+ * - Filmstrip Batch Thumbnail Queue
+ * - 8-Pass Binary Search Target-KB Engine
  * ============================================================================
  */
 
@@ -18,18 +23,21 @@ import {
 export class CompressorTool {
   constructor(app) {
     this.app = app;
-    this.files = []; // Array of { id, file, imgData, resultBlob, resultWidth, resultHeight, savings, status, error }
+    this.files = []; // Array of { id, file, imgData, resultBlob, stageBlobUrl, resultWidth, resultHeight, savings, status, error }
     this.mode = 'quality'; // 'quality' or 'target-kb'
+    this.activeFileId = null; // currently selected file shown on central stage
     
     // Settings state
     this.quality = 0.80; // 10% - 100%
     this.targetKB = 100;
-    this.outputFormat = 'image/jpeg'; // 'image/jpeg', 'image/webp', 'auto'
+    this.outputFormat = 'image/jpeg'; // 'image/jpeg', 'image/webp', 'auto', 'image/png'
+    this.scaleMultiplier = 1.0; // 0.5, 1.0, 2.0 from floating dock
     this.maxWidth = '';
     this.maxHeight = '';
     this.aspectRatioLocked = true;
     this.isProcessing = false;
     this.debounceTimer = null;
+    this.isStageDragging = false;
 
     this.initDOMElements();
     this.bindEvents();
@@ -65,6 +73,29 @@ export class CompressorTool {
     this.targetKBInput = document.getElementById('compressor-target-kb-input');
     this.targetChips = document.querySelectorAll('.target-kb-chip');
 
+    // Central Studio Stage & Before/After Split Canvas (PixorAI integration)
+    this.stageWrap = document.getElementById('compressor-stage-wrap');
+    this.splitCanvas = document.getElementById('compressor-split-canvas');
+    this.stageLayerBefore = document.getElementById('stage-layer-before');
+    this.stageImgBefore = document.getElementById('stage-img-before');
+    this.stageImgAfter = document.getElementById('stage-img-after');
+    this.stageDividerHandle = document.getElementById('stage-divider-handle');
+
+    // Floating Export Dock
+    this.exportDock = document.getElementById('studio-export-dock');
+    this.dockActiveFilename = document.getElementById('dock-active-filename');
+    this.dockSizeVal = document.getElementById('dock-size-val');
+    this.dockSavingsVal = document.getElementById('dock-savings-val');
+    this.dockReprocessBtn = document.getElementById('dock-reprocess-btn');
+    this.dockDownloadBtn = document.getElementById('dock-download-btn');
+    this.dockScalePills = document.querySelectorAll('#dock-scale-pills .dock-pill-btn');
+    this.dockFormatPills = document.querySelectorAll('#dock-format-pills .dock-pill-btn');
+
+    // Horizontal Batch Filmstrip
+    this.filmstripWrap = document.getElementById('compressor-filmstrip');
+    this.filmstripTrack = document.getElementById('filmstrip-track');
+    this.filmstripCountBadge = document.getElementById('filmstrip-count-badge');
+
     // Batch actions & stats
     this.batchActionsBar = document.getElementById('compressor-batch-actions');
     this.batchCountBadge = document.getElementById('compressor-batch-count');
@@ -78,7 +109,7 @@ export class CompressorTool {
     this.cardsContainer = document.getElementById('compressor-cards-grid');
     this.emptyState = document.getElementById('compressor-empty-state');
 
-    // Compare modal elements
+    // Compare modal elements (fallback inspector)
     this.compareModal = document.getElementById('compare-modal-backdrop');
     this.compareCloseBtn = document.getElementById('compare-modal-close');
     this.compareSliderContainer = document.getElementById('compare-slider-container');
@@ -138,6 +169,7 @@ export class CompressorTool {
     // Format selector
     this.formatSelect.addEventListener('change', (e) => {
       this.outputFormat = e.target.value;
+      this.syncDockFormatPills(this.outputFormat);
       this.triggerDebouncedBatchProcess();
     });
 
@@ -190,12 +222,99 @@ export class CompressorTool {
       });
     });
 
+    // In-Page Interactive Split Canvas Slider Dragging
+    if (this.splitCanvas) {
+      const updateStageSplit = (clientX) => {
+        const rect = this.splitCanvas.getBoundingClientRect();
+        if (rect.width <= 0) return;
+        const offsetX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+        const pct = Math.max(0, Math.min(100, (offsetX / rect.width) * 100));
+        this.splitCanvas.style.setProperty('--split-pos', `${pct}%`);
+        if (this.stageLayerBefore) {
+          this.stageLayerBefore.style.clipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
+          this.stageLayerBefore.style.webkitClipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
+        }
+        if (this.stageDividerHandle) {
+          this.stageDividerHandle.style.left = `${pct}%`;
+        }
+      };
+
+      this.splitCanvas.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.stage-pill-tag') || e.target.closest('.studio-export-dock')) return;
+        this.isStageDragging = true;
+        updateStageSplit(e.clientX);
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (this.isStageDragging) {
+          updateStageSplit(e.clientX);
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        this.isStageDragging = false;
+      });
+
+      this.splitCanvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          if (e.target.closest('.stage-pill-tag') || e.target.closest('.studio-export-dock')) return;
+          this.isStageDragging = true;
+          updateStageSplit(e.touches[0].clientX);
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (this.isStageDragging && e.touches.length === 1) {
+          updateStageSplit(e.touches[0].clientX);
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchend', () => {
+        this.isStageDragging = false;
+      });
+    }
+
+    // Floating Export Dock: Scale Pills (0.5x, 1x, 2x)
+    this.dockScalePills.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        this.dockScalePills.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.scaleMultiplier = parseFloat(btn.dataset.scale) || 1.0;
+        this.triggerDebouncedBatchProcess();
+      });
+    });
+
+    // Floating Export Dock: Format Pills (JPG, WebP, PNG)
+    this.dockFormatPills.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        this.dockFormatPills.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.outputFormat = btn.dataset.fmt;
+        if (this.formatSelect) {
+          this.formatSelect.value = this.outputFormat;
+        }
+        this.triggerDebouncedBatchProcess();
+      });
+    });
+
+    // Floating Export Dock: Action Buttons
+    if (this.dockReprocessBtn) {
+      this.dockReprocessBtn.addEventListener('click', () => this.processAll());
+    }
+
+    if (this.dockDownloadBtn) {
+      this.dockDownloadBtn.addEventListener('click', () => {
+        const active = this.getActiveItem();
+        if (active) this.downloadItem(active);
+      });
+    }
+
     // Batch Action Buttons
     this.compressAllBtn.addEventListener('click', () => this.processAll());
     this.downloadZipBtn.addEventListener('click', () => this.downloadAllZip());
     this.clearAllBtn.addEventListener('click', () => this.clearAll());
 
-    // Compare Modal Events
+    // Compare Modal Events (Modal Fallback)
     if (this.compareCloseBtn) {
       this.compareCloseBtn.addEventListener('click', () => this.closeCompareModal());
     }
@@ -248,6 +367,18 @@ export class CompressorTool {
     }
   }
 
+  syncDockFormatPills(fmt) {
+    this.dockFormatPills.forEach((pill) => {
+      pill.classList.toggle('active', pill.dataset.fmt === fmt);
+    });
+  }
+
+  getActiveItem() {
+    if (this.files.length === 0) return null;
+    const found = this.files.find((f) => f.id === this.activeFileId);
+    return found || this.files[0];
+  }
+
   setMode(mode) {
     this.mode = mode;
     const modeLabel = document.getElementById('compressor-active-mode-label');
@@ -298,12 +429,16 @@ export class CompressorTool {
           file,
           imgData,
           resultBlob: null,
+          stageBlobUrl: null,
           resultWidth: imgData.width,
           resultHeight: imgData.height,
           savings: null,
           status: 'pending',
           error: null
         });
+        if (!this.activeFileId) {
+          this.activeFileId = fileId;
+        }
         loadedCount++;
       } catch (err) {
         console.error('File load error:', err);
@@ -340,6 +475,9 @@ export class CompressorTool {
     for (const item of this.files) {
       item.status = 'processing';
       this.updateCardStatus(item);
+      if (item.id === this.activeFileId) {
+        this.updateStageActiveView();
+      }
 
       try {
         await this.processItem(item);
@@ -350,6 +488,9 @@ export class CompressorTool {
         item.error = err.message;
       }
       this.updateCard(item);
+      if (item.id === this.activeFileId) {
+        this.updateStageActiveView();
+      }
     }
 
     this.isProcessing = false;
@@ -364,6 +505,7 @@ export class CompressorTool {
       Re-compress all
     `;
     this.updateBatchStats();
+    this.updateFilmstrip();
   }
 
   async processItem(item) {
@@ -376,6 +518,12 @@ export class CompressorTool {
     // Determine target dimensions
     let targetW = imgData.width;
     let targetH = imgData.height;
+
+    // Apply scale multiplier from floating dock (0.5x, 1x, 2x)
+    if (this.scaleMultiplier && this.scaleMultiplier !== 1.0) {
+      targetW = Math.max(1, Math.round(targetW * this.scaleMultiplier));
+      targetH = Math.max(1, Math.round(targetH * this.scaleMultiplier));
+    }
 
     if (this.maxWidth && this.maxWidth < targetW) {
       const scale = this.maxWidth / targetW;
@@ -401,7 +549,11 @@ export class CompressorTool {
         bgColor: targetMime === 'image/jpeg' ? '#ffffff' : null
       });
 
+      if (item.stageBlobUrl) {
+        URL.revokeObjectURL(item.stageBlobUrl);
+      }
       item.resultBlob = result.blob;
+      item.stageBlobUrl = URL.createObjectURL(result.blob);
       item.resultWidth = result.width;
       item.resultHeight = result.height;
       item.savings = calculateSavings(imgData.size, result.blob.size);
@@ -410,7 +562,11 @@ export class CompressorTool {
       const canvas = drawImageOnCanvas(imgData.img, targetW, targetH, targetMime === 'image/jpeg' ? '#ffffff' : null);
       const blob = await canvasToBlob(canvas, targetMime, this.quality);
 
+      if (item.stageBlobUrl) {
+        URL.revokeObjectURL(item.stageBlobUrl);
+      }
       item.resultBlob = blob;
+      item.stageBlobUrl = URL.createObjectURL(blob);
       item.resultWidth = targetW;
       item.resultHeight = targetH;
       item.savings = calculateSavings(imgData.size, blob.size);
@@ -423,9 +579,22 @@ export class CompressorTool {
     this.batchActionsBar.style.display = hasFiles ? 'flex' : 'none';
     this.cardsContainer.style.display = hasFiles ? 'grid' : 'none';
 
+    if (this.stageWrap) {
+      this.stageWrap.style.display = hasFiles ? 'block' : 'none';
+    }
+
     if (!hasFiles) {
       this.cardsContainer.innerHTML = '';
+      if (this.filmstripWrap) this.filmstripWrap.style.display = 'none';
+      this.activeFileId = null;
+      if (this.stageImgBefore) this.stageImgBefore.src = '';
+      if (this.stageImgAfter) this.stageImgAfter.src = '';
       return;
+    }
+
+    // Ensure valid activeFileId
+    if (!this.activeFileId || !this.files.some((f) => f.id === this.activeFileId)) {
+      this.activeFileId = this.files[0].id;
     }
 
     // Render cards
@@ -436,6 +605,89 @@ export class CompressorTool {
     });
 
     this.updateBatchStats();
+    this.updateStageActiveView();
+    this.updateFilmstrip();
+  }
+
+  updateStageActiveView() {
+    const activeItem = this.getActiveItem();
+    if (!activeItem || !this.stageWrap) return;
+
+    if (this.dockActiveFilename) {
+      this.dockActiveFilename.textContent = activeItem.file.name;
+      this.dockActiveFilename.title = activeItem.file.name;
+    }
+
+    const origUrl = activeItem.imgData.objectUrl || activeItem.imgData.img.src;
+    if (this.stageImgBefore && this.stageImgBefore.src !== origUrl) {
+      this.stageImgBefore.src = origUrl;
+    }
+
+    if (this.stageImgAfter) {
+      if (activeItem.stageBlobUrl) {
+        this.stageImgAfter.src = activeItem.stageBlobUrl;
+      } else if (activeItem.resultBlob) {
+        activeItem.stageBlobUrl = URL.createObjectURL(activeItem.resultBlob);
+        this.stageImgAfter.src = activeItem.stageBlobUrl;
+      } else {
+        this.stageImgAfter.src = origUrl;
+      }
+    }
+
+    if (this.dockSizeVal) {
+      if (activeItem.resultBlob) {
+        this.dockSizeVal.textContent = formatBytes(activeItem.resultBlob.size);
+      } else if (activeItem.status === 'processing') {
+        this.dockSizeVal.textContent = 'Processing...';
+      } else {
+        this.dockSizeVal.textContent = '-- KB';
+      }
+    }
+
+    if (this.dockSavingsVal) {
+      if (activeItem.savings) {
+        this.dockSavingsVal.textContent = `(${activeItem.savings.label})`;
+        this.dockSavingsVal.className = `dock-savings-tag ${!activeItem.savings.isReduction ? 'negative' : ''}`;
+      } else {
+        this.dockSavingsVal.textContent = '';
+      }
+    }
+
+    if (this.dockDownloadBtn) {
+      this.dockDownloadBtn.disabled = !activeItem.resultBlob || activeItem.status === 'error';
+    }
+
+    // Sync dock format pills
+    this.syncDockFormatPills(this.outputFormat);
+  }
+
+  updateFilmstrip() {
+    if (!this.filmstripWrap || !this.filmstripTrack) return;
+    if (this.files.length <= 1) {
+      this.filmstripWrap.style.display = 'none';
+      return;
+    }
+
+    this.filmstripWrap.style.display = 'flex';
+    if (this.filmstripCountBadge) {
+      this.filmstripCountBadge.textContent = `${this.files.length} items`;
+    }
+
+    this.filmstripTrack.innerHTML = '';
+    this.files.forEach((item) => {
+      const thumb = document.createElement('div');
+      thumb.className = `filmstrip-thumb ${item.id === this.activeFileId ? 'active' : ''}`;
+      thumb.title = `${item.file.name} (${item.resultBlob ? formatBytes(item.resultBlob.size) : 'Queued'})`;
+      const thumbUrl = item.imgData.thumbUrl || item.imgData.objectUrl || item.imgData.img.src;
+      thumb.innerHTML = `<img src="${thumbUrl}" alt="${item.file.name}" />`;
+      thumb.addEventListener('click', () => {
+        this.activeFileId = item.id;
+        this.filmstripTrack.querySelectorAll('.filmstrip-thumb').forEach((t) => t.classList.remove('active'));
+        thumb.classList.add('active');
+        this.updateStageActiveView();
+      });
+      this.filmstripTrack.appendChild(thumb);
+    });
   }
 
   createCardElement(item) {
@@ -448,7 +700,7 @@ export class CompressorTool {
 
     card.innerHTML = `
       <div class="card-preview-box">
-        <img class="card-preview-img" src="${thumbUrl}" alt="${item.file.name}" />
+        <img class="card-preview-img" src="${thumbUrl}" alt="${item.file.name}" onerror="this.onerror=null; this.src='${item.imgData.objectUrl || ''}'" />
         <span class="card-badge-status badge-${item.status}">${this.getStatusLabel(item.status)}</span>
       </div>
       <div class="card-body">
@@ -476,7 +728,7 @@ export class CompressorTool {
             Remove
           </button>
           <div style="display:flex; gap:0.35rem;">
-            <button class="btn btn-sm btn-outline compare-btn" ${!item.resultBlob ? 'disabled' : ''} title="Compare visual quality">
+            <button class="btn btn-sm btn-outline compare-btn" ${!item.resultBlob ? 'disabled' : ''} title="Inspect on Stage / Compare">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -501,7 +753,12 @@ export class CompressorTool {
     removeBtn.addEventListener('click', () => this.removeItem(item.id));
 
     const compareBtn = card.querySelector('.compare-btn');
-    compareBtn.addEventListener('click', () => this.openCompareModal(item));
+    compareBtn.addEventListener('click', () => {
+      this.activeFileId = item.id;
+      this.updateStageActiveView();
+      this.updateFilmstrip();
+      this.openCompareModal(item);
+    });
 
     const downloadBtn = card.querySelector('.download-btn');
     downloadBtn.addEventListener('click', () => this.downloadItem(item));
@@ -590,10 +847,18 @@ export class CompressorTool {
 
   removeItem(id) {
     const item = this.files.find((f) => f.id === id);
-    if (item && item.imgData && item.imgData.objectUrl) {
-      URL.revokeObjectURL(item.imgData.objectUrl);
+    if (item) {
+      if (item.imgData && item.imgData.objectUrl) {
+        URL.revokeObjectURL(item.imgData.objectUrl);
+      }
+      if (item.stageBlobUrl) {
+        URL.revokeObjectURL(item.stageBlobUrl);
+      }
     }
     this.files = this.files.filter((f) => f.id !== id);
+    if (this.activeFileId === id) {
+      this.activeFileId = this.files.length > 0 ? this.files[0].id : null;
+    }
     this.updateUI();
   }
 
@@ -602,8 +867,12 @@ export class CompressorTool {
       if (item.imgData && item.imgData.objectUrl) {
         URL.revokeObjectURL(item.imgData.objectUrl);
       }
+      if (item.stageBlobUrl) {
+        URL.revokeObjectURL(item.stageBlobUrl);
+      }
     });
     this.files = [];
+    this.activeFileId = null;
     this.updateUI();
     this.app.showToast('Cleared all files', 'info');
   }
@@ -621,7 +890,7 @@ export class CompressorTool {
     if (!item.resultBlob || !this.compareModal) return;
 
     const origUrl = item.imgData.objectUrl || item.imgData.img.src;
-    const compUrl = URL.createObjectURL(item.resultBlob);
+    const compUrl = item.stageBlobUrl || URL.createObjectURL(item.resultBlob);
 
     this.compareImgBefore.src = origUrl;
     this.compareImgAfter.src = compUrl;
@@ -649,9 +918,6 @@ export class CompressorTool {
     if (!this.compareModal) return;
     this.compareModal.classList.remove('active');
     this.isComparing = false;
-    if (this.compareImgAfter.src && this.compareImgAfter.src.startsWith('blob:')) {
-      URL.revokeObjectURL(this.compareImgAfter.src);
-    }
     this.compareImgBefore.src = '';
     this.compareImgAfter.src = '';
   }

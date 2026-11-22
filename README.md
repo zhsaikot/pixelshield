@@ -1,9 +1,9 @@
 # PixelShield 🛡️
-> **100% Client-Side Privacy Media Lab & Document Studio**  
-> Pure HTML5, Modern CSS3, and Modular Vanilla ES6+ JavaScript. Designed with a clean SaaS aesthetic, optimized for direct deployment on GitHub Pages with zero server backend.
+> **100% Client-Side Privacy Media Lab & Desktop-Grade Creative Studio**  
+> Pure HTML5, Modern CSS3, and Modular Vanilla ES6+ JavaScript. Inspired by PixorAI desktop studio design with collapsible sidebar, central interactive before/after split canvas, floating frosted export dock, and 1-click synthetic test presets. Optimized for direct deployment on GitHub Pages with zero server backend.
 
-[![Privacy: 100% Client-Side](https://img.shields.io/badge/Privacy-100%25%20Local-success?style=flat-square&logo=shield)](https://github.com)
-[![Deployment: GitHub Pages Ready](https://img.shields.io/badge/Deploy-GitHub%20Pages%20Ready-blue?style=flat-square&logo=github)](https://pages.github.com)
+[![Privacy: 100% Client-Side](https://img.shields.io/badge/Privacy-100%25%20Local-success?style=flat-square&logo=shield)](https://github.com/zhsaikot/pixelshield)
+[![Deployment: GitHub Pages Ready](https://img.shields.io/badge/Deploy-GitHub%20Pages%20Ready-blue?style=flat-square&logo=github)](https://zhsaikot.github.io/pixelshield/)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(Pure%20Vanilla%20ES6)-orange?style=flat-square)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Live App](https://img.shields.io/badge/Live-zhsaikot.github.io%2Fpixelshield-brightgreen?style=flat-square)](https://zhsaikot.github.io/pixelshield/)
 
@@ -14,7 +14,9 @@
 - **🔒 Zero-Server Processing:** Every operation (compression, resizing, format conversion, EXIF scrubbing, passport sheet generation, PDF generation, sensitive redaction, signature cleaning, watermarking, and asset generation) runs strictly inside the user's browser using HTML5 `<canvas>`, `FileReader`, `Blob`, `jsPDF`, and `JSZip`.
 - **🛡️ 100% Local Privacy:** Files never leave your device. No analytics, no tracking, no external API calls, and no server upload endpoints. Works completely offline.
 - **⚡ Target-KB Binary Search Engine:** Automatically balances compression quality and proportional downscaling across an 8-pass binary search loop to hit exact government portal and document upload size caps (e.g. `50 KB`, `100 KB`, `200 KB`).
-- **🔍 Interactive Before/After Split Slider:** Compare original and compressed image fidelity side-by-side with a draggable split-screen comparison modal.
+- **🎨 Desktop-Grade Studio Interface:** Inspired by high-end creative desktop software (PixorAI) with collapsible tool navigation, central interactive split canvas stage, floating frosted export dock with live scale (`0.5x`, `1x`, `2x`) and format pills, and horizontal batch queue filmstrip.
+- **⚡ 1-Click Synthetic Test Presets:** Instant test buttons in the sidebar (`Portrait`, `Document`, `Scenery`) to test all tools instantly without needing to search for local files.
+- **⌘K Command Palette:** Fuzzy searchable quick-switcher for all 7 tools, preset loaders, and workspace actions.
 - **🏷️ Smart Batch Rename:** Prefix all processed files automatically before exporting single files or bundled ZIP archives.
 - **🖨️ Complete 7-in-1 Privacy Suite:** From ID sheets and PDF compilation to sensitive document censorship and job portal signature binarization.
 
@@ -31,11 +33,11 @@ pixelshield/
 │   ├── variables.css           # Design tokens, color system, dark/light themes
 │   └── style.css               # Studio layout, responsive components, tool interfaces
 └── js/
-    ├── app.js                  # Main controller, hash router, theme toggle, toast alerts
+    ├── app.js                  # Main controller, hash router, theme toggle, toast alerts, command palette
     ├── utils/
     │   └── image-engine.js     # Shared canvas engine, binary search, EXIF parser, ZIP helper
     └── tools/
-        ├── compressor.js       # Tool 1: Smart Compressor, Target-KB & Split Comparison
+        ├── compressor.js       # Tool 1: Smart Compressor, Target-KB, Stage Split & Filmstrip
         ├── converter-exif.js   # Tool 2: Format Converter, EXIF Stripper & Batch Renamer
         ├── passport-maker.js   # Tool 3: ID & Passport Studio & Printable Sheet Maker
         ├── image-to-pdf.js     # Tool 4: Multi-Image to PDF Studio (jsPDF)
@@ -51,15 +53,17 @@ All asset and script references use clean relative paths (`./css/...`, `./js/...
 ## 🛠️ Complete Suite of 7 Privacy Tools
 
 ### 1. Smart Compressor & Target-KB Studio (`#compress`)
+- **Interactive Split Stage & Floating Dock:**
+  - Real-time before/after comparison canvas right on the main stage with a draggable vertical divider.
+  - Floating frosted export dock with quick scale multipliers (`0.5x`, `1x`, `2x`), format buttons (`JPG`, `WebP`, `PNG`), live size stats, and instant download.
+  - Horizontal batch queue filmstrip for multi-file workflows.
 - **Quality & Resize Mode:**
   - Interactive quality slider (10% to 100%) with live preview and byte counter.
   - Optional dimension resizing (Max Width / Max Height) with one-click aspect ratio locking.
-  - Output formats: JPEG, WebP, or Preserve Original.
+  - Output formats: JPEG, WebP, PNG, or Preserve Original.
 - **Target File Size (KB) Mode:**
   - Enter exact size constraints (e.g. `50 KB`, `100 KB`, `200 KB`, `500 KB`).
   - **8-Pass Binary Search:** Performs an 8-iteration binary search on JPEG/WebP compression quality. If an oversized image at minimum quality (0.05) still exceeds the target size, the engine dynamically calculates proportional downscaling to guarantee strict compliance without distorting proportions.
-- **Interactive Before/After Split Comparison:**
-  - Click "Compare" on any compressed item to open an interactive side-by-side split slider to visually inspect pixel quality differences.
 - **Batch Actions & Smart Renaming:**
   - Live size comparison (`2.4 MB → 94 KB (-96%)`), custom filename prefix input, individual downloads, and single-click "Download All as ZIP".
 
@@ -78,117 +82,67 @@ All asset and script references use clean relative paths (`./css/...`, `./js/...
   - `35 × 35 mm` (Japan / Asian ID)
   - `50 × 70 mm` (Canadian Passport)
 - **Interactive Biometric Cropper:**
-  - Drag to pan, mouse-wheel or slider to zoom (50% to 300%).
-  - Rotation straightener slider (-45° to +45°) to correct tilted headshots.
-  - Horizontal flip toggle.
-  - Biometric guideline overlay: Face oval boundary (crown to chin 70-80% height), eye level guideline (56-60% height), and center vertical axis.
-- **Studio Background Replacer:** Select Pure White, Off-White, Light Blue (standard for Asian/Arab passports), or Original.
-- **Two Export Modes:**
-  1. **Single Digital Photo:** 300 DPI high-resolution JPEG/PNG formatted to exact preset dimensions.
-  2. **Printable Photo Sheet:** Automatically tiles multiple copies (e.g., 8 photos on 4×6" photo paper or 24+ photos on A4 paper) with subtle scissor cut-guide lines and corner tick marks. Features live miniature sheet preview.
+  - Zoom, Pan, Center, and Rotate tools.
+  - Biometric face and eye guideline overlays to align chin, crown, and eye levels according to ICAO specifications.
+- **Printable Grid Sheet Generator:**
+  - Standard Paper Sizes: `A4` (210 × 297 mm), `4 × 6 inch` (Standard Photo Card), `Letter`.
+  - Configurable spacing, print cut guidelines, and single photo download or full printable PDF/PNG export.
 
 ### 4. Multi-Image to PDF Studio (`#img-to-pdf`)
-- **Multi-Image Drag & Drop:** Upload batches of receipts, contract pages, or photos.
-- **Interactive Page Reordering:** Move pages left/right or remove individual pages with live re-indexed page thumbnails.
-- **Configurable Document Settings:**
-  - Page Formats: `A4`, `Letter`, or `Fit to Image`.
-  - Orientations: `Portrait` or `Landscape` (with auto-orient option for "Fit to Image").
-  - Margins: `None (0 mm)`, `Small (10 mm)`, `Medium (20 mm)`.
-  - Image Compression: Adjustable quality slider from high fidelity to small file size.
-- **Local PDF Engine:** Utilizes client-side `jsPDF` to compile and download multi-page PDFs with zero server transmissions.
+- **Drag-and-Drop Page Arrangement:** Upload unlimited images, reorder pages with move left/right controls, and remove unwanted pages.
+- **Configurable Layouts:** Page sizes (`A4`, `Letter`, `Fit to Image`), Orientations (`Portrait`, `Landscape`), and Margins (`None`, `Small`, `Medium`).
+- **Direct Local PDF Generation:** Compiles images into a single `.pdf` document in-memory using `jsPDF`.
 
-### 5. Privacy Redactor / Blur & Censor Tool (`#redact`)
-- **Interactive Canvas Redactor:** Upload screenshots, identity cards, or sensitive documents and drag selection boxes directly over private details (phone numbers, National IDs, bank accounts, faces).
+### 5. Privacy Redactor / Blur, Pixelate & Censor (`#redact`)
+- **Sensitive Information Scrubbing:** Drag rectangles directly on images or document screenshots to conceal credit cards, national IDs, faces, and phone numbers.
 - **3 Redaction Modes:**
-  1. **Gaussian Blur:** Soft optical blurring with adjustable intensity radius.
-  2. **Pixelate (Mosaic):** Heavy cryptographic mosaic block obfuscation with adjustable block size.
-  3. **Solid Blackout Bar:** Opaque redaction bar meeting government disclosure standards.
-- **Precision Workflow:** Multi-step Undo (`Ctrl+Z`), full reset, zoom/pan capability, and clean export (PNG/JPEG) with complete EXIF metadata stripping.
+  - **Gaussian Blur** with customizable intensity slider.
+  - **Mosaic Pixelation** with adjustable block sizes.
+  - **Solid Black Censor Bar** for absolute redaction.
+- **Undo History & EXIF Cleansing:** Step backward through actions and export as clean, metadata-free PNG or JPEG.
 
 ### 6. Job Portal Signature & Watermark Studio (`#signature`)
-- **Tab A — Signature Cleaner & Resizer:**
-  - **Paper-to-Clean Digital Conversion:** Upload a photo of a signature taken on paper with uneven shadows or draw live on a smooth touch/mouse signature pad.
-  - **Binarization & Threshold Engine:** Adjust threshold slider to remove off-white paper, shadows, and wrinkles, turning signatures into crisp transparent-background PNGs or pure white JPGs.
-  - **Portal Size & KB Presets:** One-click presets for government and job portal requirements:
-    - `300 × 80 px` under `60 KB`
-    - `300 × 300 px` under `100 KB`
-    - Custom dimensions and target KB using the built-in binary search engine.
-- **Tab B — Text & Logo Watermark Overlay:**
-  - Add copyright notices or draft stamps to protect confidential previews.
-  - Text watermarks with customizable font size, color, opacity, and rotation angle (-90° to +90°).
-  - Flexible positioning: Tiled repeated pattern, Center, Top-Left, Top-Right, Bottom-Left, Bottom-Right.
-  - Logo watermark support: Overlay company logos or stamps with transparency control.
+- **Tab A — Signature Cleaner & Paper Remover:**
+  - Upload a mobile photo of a physical signature or draw directly on a touch/mouse canvas.
+  - **Dynamic Threshold Slider:** Converts off-white paper and shadows into a pure transparent PNG or crisp white JPG.
+  - Quick govt/job portal presets (e.g. `300 × 80 px` under `60 KB`, `300 × 300 px` under `100 KB`).
+- **Tab B — Text & Logo Watermarking:**
+  - Overlay custom text or brand logos with controls for opacity, font size, angle rotation, corner positioning, and full diagonal tiled repeat.
 
-### 7. Favicon & Social Asset Generator (`#assets`)
-- **Subtab A — Favicon Suite:**
-  - Upload a high-resolution logo to generate all standard web and mobile icon sizes: `16 × 16`, `32 × 32`, `48 × 48`, `180 × 180` (Apple Touch Icon), and `512 × 512` (PWA).
-  - One-click bundled ZIP download containing all 5 optimized PNG icons.
-  - Instant copyable HTML `<link rel="icon">` snippet ready to paste into website headers.
-- **Subtab B — Social Media Crop & Blur-Pad:**
-  - Standard aspect ratio presets:
-    - `1:1` (Instagram / Square Post)
-    - `9:16` (Story / Reels / TikTok)
-    - `16:9` (YouTube Thumbnail / Twitter Card)
-    - `4:5` (Instagram Portrait)
-  - **Dual Layout Options:** Center crop to fill or intelligent **Blur-Pad** (scales the entire image to fit while filling letterbox bars with an aesthetically pleasing blurred version of the photo).
+### 7. Favicon Suite & Social Media Asset Generator (`#assets`)
+- **Favicon Production Pack:** Upload a single high-resolution square logo and generate all required favicon sizes: `16×16`, `32×32`, `48×48`, `180×180` (Apple Touch), and `512×512` (PWA). Exports as a ready-to-use `.zip` bundle with a copyable `<link>` HTML snippet.
+- **Social Media Aspect Ratio Converter:** One-click presets for `1:1` (Square Feed), `9:16` (Story/Reels), and `16:9` (YouTube Thumbnail/Landscape) with either smart center crop or blurred letterbox padding.
 
 ---
 
-## 🚀 Deployment to GitHub Pages
+## ⌨️ Keyboard Shortcuts
 
-Deploying PixelShield takes less than 60 seconds:
-
-1. **Commit your changes:**
-   ```bash
-   git add .
-   git commit -m "feat: complete PixelShield 7-in-1 privacy studio"
-   ```
-
-2. **Push to GitHub:**
-   ```bash
-   git push origin main
-   ```
-
-3. **Enable GitHub Pages:**
-   - In your GitHub repository, navigate to **Settings** → **Pages**.
-   - Under **Build and deployment** → **Source**, select `Deploy from a branch`.
-   - Select branch `main` and folder `/(root)`.
-   - Click **Save**.
-   - Your studio will be live in moments at: `https://zhsaikot.github.io/pixelshield/`
+| Shortcut | Action |
+| :--- | :--- |
+| `⌘K` or `Ctrl+K` | Open Command Palette |
+| `Escape` | Close active modal / Command Palette |
+| `1` - `7` (inside `⌘K`) | Jump directly to Tool 1 - 7 |
 
 ---
 
-## 💻 Running Locally
+## 🚀 Local Development & Offline Running
 
-Because PixelShield uses pure Vanilla ES6 JavaScript modules (`import`/`export`), serve it via any local HTTP server:
+PixelShield requires **no build step, no Node.js compilation, and no backend**.
 
-### Option 1: Python 3
+You can run it with any local static HTTP server:
+
 ```bash
+# Python 3
 python -m http.server 8000
-# Open http://localhost:8000 in your browser
-```
 
-### Option 2: Node `npx serve`
-```bash
+# Node.js
 npx serve .
 ```
 
-### Option 3: VS Code / IDE Live Server
-Right-click `index.html` and select **"Open with Live Server"**.
-
----
-
-## 🛡️ Security & Privacy Architecture
-
-| Vector | PixelShield Implementation | Risk Level |
-| :--- | :--- | :--- |
-| **Network Requests** | Zero outbound requests for image or document data. Operations never touch any server. | **None (0%)** |
-| **EXIF & Geolocation** | Redrawn to fresh canvas memory buffers, discarding all TIFF, EXIF, and GPS coordinates. | **Purged completely** |
-| **Data Retention** | Ephemeral browser memory only (`URL.revokeObjectURL` cleanup). No IndexedDB or localStorage storage of raw images. | **None (0%)** |
-| **Offline Support** | Fully functional without internet connection once cached. | **100% Offline** |
+Open `http://localhost:8000` in any modern web browser.
 
 ---
 
 ## 📄 License
 
-MIT License — Free for personal and commercial use.
+MIT License. Free and open source for personal and commercial privacy-preserving workflows.

@@ -28,121 +28,224 @@
 </head>
 <body>
 
-  <!-- App Header -->
-  <header class="app-header">
-    <div class="header-container">
-      <div class="brand-wrapper" title="PixelShield — Private Media Lab">
-        <div class="brand-logo-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            <polyline points="9 12 11 14 15 10"></polyline>
+  <!-- =========================================================================
+       PIXELSHIELD DESKTOP STUDIO SHELL
+       Collapsible Left Sidebar + Top Command Bar + Immersive Studio Viewport
+       ========================================================================= -->
+  <div class="studio-shell" id="studio-shell">
+
+    <!-- 1. COLLAPSIBLE LEFT SIDEBAR -->
+    <aside class="studio-sidebar" id="studio-sidebar">
+      <div class="sidebar-top">
+        <div class="brand-wrapper" title="PixelShield — Private Media Lab">
+          <div class="brand-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <polyline points="9 12 11 14 15 10"></polyline>
+            </svg>
+          </div>
+          <div class="brand-info">
+            <span class="brand-title">PixelShield</span>
+            <span class="brand-subtitle">Private Media Lab</span>
+          </div>
+        </div>
+        <button id="sidebar-toggle-btn" class="sidebar-collapse-btn" aria-label="Toggle Sidebar" title="Collapse or Expand Sidebar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
           </svg>
-        </div>
-        <div class="brand-info">
-          <span class="brand-title">PixelShield</span>
-          <span class="brand-subtitle">Private Media Lab</span>
-        </div>
-      </div>
-
-      <!-- Trust Indicator -->
-      <div class="privacy-badge" title="Files are processed exclusively in your browser memory via HTML5 Canvas. Zero network uploads.">
-        <svg class="privacy-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-        <span class="badge-long-text">Private by design · Files stay on your device</span>
-      </div>
-
-      <div class="header-actions">
-        <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">
-          <!-- Populated by JS -->
         </button>
       </div>
-    </div>
-  </header>
 
-  <!-- Navigation Tab Bar (7 High-Utility Tools) -->
-  <nav class="nav-section" aria-label="Tool Navigation">
-    <div class="nav-container">
-      <!-- Tool 1 -->
-      <button class="nav-tab-btn active" data-tab="compress" aria-selected="true">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="4 14 10 14 10 20"></polyline>
-          <polyline points="20 10 14 10 14 4"></polyline>
-          <line x1="14" y1="10" x2="21" y2="3"></line>
-          <line x1="3" y1="21" x2="10" y2="14"></line>
-        </svg>
-        <span>Compressor</span>
-        <span class="tab-badge">Target-KB</span>
-      </button>
+      <div class="sidebar-section-title">Image Tools</div>
+      <nav class="sidebar-nav" aria-label="Tools Navigation">
+        <!-- Tool 1 -->
+        <button class="nav-tab-btn active" data-tab="compress" aria-selected="true" title="Smart Compressor (Target-KB)">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 14 10 14 10 20"></polyline>
+              <polyline points="20 10 14 10 14 4"></polyline>
+              <line x1="14" y1="10" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Smart Compressor</span>
+          <span class="nav-badge-pill">Target-KB</span>
+          <span class="nav-active-dot"></span>
+        </button>
 
-      <!-- Tool 2 -->
-      <button class="nav-tab-btn" data-tab="convert" aria-selected="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          <path d="M10 9l5 3-5 3V9z"></path>
-        </svg>
-        <span>Converter &amp; EXIF</span>
-        <span class="tab-badge">WebP / JPG</span>
-      </button>
+        <!-- Tool 2 -->
+        <button class="nav-tab-btn" data-tab="convert" aria-selected="false" title="Format Converter &amp; EXIF Purge">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="M10 9l5 3-5 3V9z"></path>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Converter &amp; EXIF</span>
+          <span class="nav-badge-pill">WebP/JPG</span>
+          <span class="nav-active-dot"></span>
+        </button>
 
-      <!-- Tool 3 -->
-      <button class="nav-tab-btn" data-tab="passport" aria-selected="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-          <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"></rect>
-        </svg>
-        <span>Passport &amp; ID</span>
-        <span class="tab-badge">300 DPI</span>
-      </button>
+        <!-- Tool 3 -->
+        <button class="nav-tab-btn" data-tab="passport" aria-selected="false" title="Passport &amp; ID Photo Studio">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"></rect>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Passport &amp; ID</span>
+          <span class="nav-badge-pill">300 DPI</span>
+          <span class="nav-active-dot"></span>
+        </button>
 
-      <!-- Tool 4 (New) -->
-      <button class="nav-tab-btn" data-tab="img-to-pdf" aria-selected="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-        </svg>
-        <span>Images to PDF</span>
-        <span class="tab-badge">Pages</span>
-      </button>
+        <!-- Tool 4 -->
+        <button class="nav-tab-btn" data-tab="img-to-pdf" aria-selected="false" title="Images to PDF Studio">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Images to PDF</span>
+          <span class="nav-badge-pill">Multi</span>
+          <span class="nav-active-dot"></span>
+        </button>
 
-      <!-- Tool 5 (New) -->
-      <button class="nav-tab-btn" data-tab="redact" aria-selected="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-          <line x1="1" y1="1" x2="23" y2="23"></line>
-        </svg>
-        <span>Redactor &amp; Blur</span>
-        <span class="tab-badge">Censor</span>
-      </button>
+        <!-- Tool 5 -->
+        <button class="nav-tab-btn" data-tab="redact" aria-selected="false" title="Privacy Redactor &amp; Blur Tool">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Redactor &amp; Blur</span>
+          <span class="nav-badge-pill">Censor</span>
+          <span class="nav-active-dot"></span>
+        </button>
 
-      <!-- Tool 6 (New) -->
-      <button class="nav-tab-btn" data-tab="signature" aria-selected="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-        </svg>
-        <span>Signature &amp; Watermark</span>
-        <span class="tab-badge">Portals</span>
-      </button>
+        <!-- Tool 6 -->
+        <button class="nav-tab-btn" data-tab="signature" aria-selected="false" title="Signature &amp; Watermark Studio">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Signature &amp; Watermark</span>
+          <span class="nav-badge-pill">Portals</span>
+          <span class="nav-active-dot"></span>
+        </button>
 
-      <!-- Tool 7 (New) -->
-      <button class="nav-tab-btn" data-tab="assets" aria-selected="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-        </svg>
-        <span>Favicon &amp; Social</span>
-        <span class="tab-badge">Assets</span>
-      </button>
-    </div>
-  </nav>
+        <!-- Tool 7 -->
+        <button class="nav-tab-btn" data-tab="assets" aria-selected="false" title="Favicon &amp; Social Asset Generator">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Favicon &amp; Social</span>
+          <span class="nav-badge-pill">Assets</span>
+          <span class="nav-active-dot"></span>
+        </button>
+      </nav>
 
-  <!-- Main Application Body -->
-  <main class="app-main">
+      <!-- 1-Click Quick Sample Presets ("No Images? Try one of these...") -->
+      <div class="sidebar-presets-card">
+        <div class="presets-header">
+          <span class="presets-title">No Images?</span>
+          <span class="presets-sub">Try one of these...</span>
+        </div>
+        <div class="presets-row">
+          <button type="button" class="preset-chip-btn" data-preset="portrait" title="Try Sample High-Res Portrait">
+            <span class="preset-avatar">👩</span>
+            <span class="preset-label">Portrait</span>
+          </button>
+          <button type="button" class="preset-chip-btn" data-preset="document" title="Try Sample Document Scan">
+            <span class="preset-avatar">📄</span>
+            <span class="preset-label">Form</span>
+          </button>
+          <button type="button" class="preset-chip-btn" data-preset="scenery" title="Try Sample Landscape Photo">
+            <span class="preset-avatar">🌄</span>
+            <span class="preset-label">Scenery</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Zero-Server Privacy Engine Card -->
+      <div class="sidebar-privacy-card">
+        <div class="privacy-engine-header">
+          <div class="privacy-engine-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <polyline points="9 12 11 14 15 10"></polyline>
+            </svg>
+          </div>
+          <div class="privacy-engine-meta">
+            <span class="privacy-engine-name">Local Sandbox</span>
+            <span class="privacy-engine-status">Zero-Server</span>
+          </div>
+        </div>
+        <div class="privacy-engine-text">Processed strictly in browser memory. No network egress, 100% private.</div>
+      </div>
+    </aside>
+
+    <!-- 2. STUDIO MAIN COLUMN -->
+    <div class="studio-main-col">
+      <!-- Studio Topbar -->
+      <header class="studio-topbar">
+        <div class="topbar-search-wrap">
+          <button type="button" id="topbar-command-trigger" class="topbar-search-btn" title="Open Quick Command Palette (Ctrl+K)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span class="search-placeholder">Search tools, actions or presets...</span>
+            <kbd class="search-kbd">⌘ K</kbd>
+          </button>
+        </div>
+
+        <div class="topbar-center">
+          <div class="studio-breadcrumb">
+            <span class="crumb-app">PixelShield</span>
+            <span class="crumb-sep">/</span>
+            <span id="studio-active-tool-crumb" class="crumb-tool">Smart Compressor</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" id="stage-fullscreen-btn" class="topbar-btn" title="Toggle Fullscreen Canvas" aria-label="Fullscreen">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+          </button>
+          <button type="button" id="privacy-info-btn" class="topbar-btn" title="Privacy Engine Guarantee" aria-label="Privacy Info">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </button>
+          <button id="theme-toggle-btn" class="topbar-btn theme-toggle-btn" aria-label="Toggle dark/light mode" title="Toggle Theme">
+            <!-- Populated by JS -->
+          </button>
+          <a href="https://github.com/zhsaikot/pixelshield" target="_blank" rel="noopener noreferrer" class="topbar-btn" title="GitHub Repository">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <!-- Studio Viewport Content -->
+      <div class="studio-viewport">
+        <!-- Main Application Body -->
+        <main class="app-main">
 
     <!-- =======================================================================
          TOOL 1: SMART COMPRESSOR PAGE
@@ -303,6 +406,76 @@
             <p class="target-engine-text">
               Guarantees files strictly stay under portal upload limits. If minimum compression quality still exceeds the cap, progressive proportional downscaling is safely applied.
             </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Studio Stage: Before/After Split View & Floating Dock -->
+      <div id="compressor-stage-wrap" class="studio-stage-wrap" style="display:none;">
+        <div class="studio-stage-inner">
+          <div class="stage-split-canvas" id="compressor-split-canvas">
+            <div class="stage-pill-tag tag-before">Original Photo</div>
+            <div class="stage-pill-tag tag-after">Optimized Fidelity</div>
+            <div class="stage-img-layer stage-layer-after">
+              <img id="stage-img-after" src="" alt="Compressed image stage" />
+            </div>
+            <div class="stage-img-layer stage-layer-before" id="stage-layer-before">
+              <img id="stage-img-before" src="" alt="Original image stage" />
+            </div>
+            <div class="stage-divider-handle" id="stage-divider-handle">
+              <div class="stage-handle-knob">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating Export Dock (Directly from PixorAI reference mockup) -->
+          <div class="studio-export-dock" id="studio-export-dock">
+            <div class="dock-header">
+              <span class="dock-title">Export Option</span>
+              <div class="dock-active-filename" id="dock-active-filename">image.jpg</div>
+            </div>
+            <div class="dock-controls-row">
+              <div class="dock-segment-group" id="dock-scale-pills">
+                <button type="button" class="dock-pill-btn active" data-scale="1">1x</button>
+                <button type="button" class="dock-pill-btn" data-scale="0.5">0.5x</button>
+                <button type="button" class="dock-pill-btn" data-scale="2">2x</button>
+              </div>
+              <div class="dock-segment-group" id="dock-format-pills">
+                <button type="button" class="dock-pill-btn" data-fmt="image/jpeg">JPG</button>
+                <button type="button" class="dock-pill-btn active" data-fmt="image/webp">WebP</button>
+                <button type="button" class="dock-pill-btn" data-fmt="image/png">PNG</button>
+              </div>
+            </div>
+            <div class="dock-actions-row">
+              <div class="dock-stat-pill">
+                <span class="dock-stat-label">Estimated:</span>
+                <span id="dock-size-val" class="dock-stat-val">-- KB</span>
+                <span id="dock-savings-val" class="dock-savings-tag">(-0%)</span>
+              </div>
+              <div class="dock-btns-group">
+                <button type="button" id="dock-reprocess-btn" class="dock-btn-secondary" title="Re-run Optimization">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                  <span>Re-Process</span>
+                </button>
+                <button type="button" id="dock-download-btn" class="dock-btn-primary">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download Now</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Batch Filmstrip (Exactly as agreed in /grill-me) -->
+        <div class="studio-filmstrip" id="compressor-filmstrip" style="display:none;">
+          <div class="filmstrip-label">
+            <span>Batch Queue</span>
+            <span id="filmstrip-count-badge" class="badge">1 item</span>
+          </div>
+          <div class="filmstrip-track" id="filmstrip-track">
+            <!-- Dynamic thumbnails rendered by compressor.js -->
           </div>
         </div>
       </div>
@@ -1277,7 +1450,68 @@
 
     </section>
 
-  </main>
+      </main>
+    </div> <!-- /.studio-viewport -->
+  </div> <!-- /.studio-main-col -->
+</div> <!-- /.studio-shell -->
+
+  <!-- =========================================================================
+       MODAL: INTERACTIVE ⌘K COMMAND PALETTE
+       ========================================================================= -->
+  <div id="command-palette-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cmd-modal-title">
+    <div class="modal-dialog command-palette-dialog">
+      <div class="command-palette-search-row">
+        <svg class="cmd-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="command-search-input" class="cmd-input" placeholder="Type a command or jump to tool..." autocomplete="off">
+        <kbd class="esc-kbd">ESC</kbd>
+      </div>
+      <div class="command-palette-results" id="command-palette-results">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+      <div class="command-palette-footer">
+        <div class="cmd-keys-hint">
+          <span><kbd>↑</kbd> <kbd>↓</kbd> navigate</span>
+          <span><kbd>↵</kbd> select</span>
+          <span><kbd>ESC</kbd> close</span>
+        </div>
+        <span class="cmd-privacy-badge">100% Client-Side</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: PRIVACY GUARANTEE & LOCAL ENGINE INSPECTOR
+       ========================================================================= -->
+  <div id="privacy-modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="privacy-modal-title" class="modal-title">Zero-Server Privacy Guarantee</h3>
+        <button id="privacy-modal-close" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.4rem;">
+        <div style="display:flex; align-items:flex-start; gap:0.9rem;">
+          <div style="width:40px; height:40px; border-radius:var(--radius-md); background:var(--accent-primary-subtle); border:1px solid var(--accent-primary-border); display:flex; align-items:center; justify-content:center; color:var(--accent-primary); flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <polyline points="9 12 11 14 15 10"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h4 style="margin:0 0 0.25rem; font-size:1rem; font-weight:650; color:var(--text-primary);">Zero Files Ever Leave Your Browser</h4>
+            <p style="margin:0; font-size:0.82rem; color:var(--text-secondary); line-height:1.4;">PixelShield is engineered specifically for sensitive identity documents, passports, and private photos.</p>
+          </div>
+        </div>
+        <div style="margin-top:1.2rem; display:flex; flex-direction:column; gap:0.75rem; font-size:0.82rem; color:var(--text-primary); line-height:1.45;">
+          <div><strong>1. HTML5 In-Memory Canvas Processing:</strong> Images are decoded into standard HTML5 ImageBitmaps held strictly in transient browser RAM.</div>
+          <div><strong>2. Automatic EXIF &amp; Metadata Purging:</strong> Redrawing pixels onto a pristine &lt;canvas&gt; context completely discards GPS, camera serials, and timestamps.</div>
+          <div><strong>3. Zero Cloud Ingestion / Zero Telemetry:</strong> No tracking scripts, no third-party analytics, and zero API calls transmitting binary payloads.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Interactive Before/After Split-Screen Compare Modal -->
   <div id="compare-modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="compare-modal-title">
@@ -1298,7 +1532,10 @@
             <img id="compare-img-before" src="" alt="Original image" />
           </div>
           <div class="compare-divider-handle" id="compare-divider-handle">
-            <div class="compare-handle-knob">↔</div>
+            <div class="compare-handle-knob">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
           </div>
         </div>
         <p style="font-size:0.78rem; color:var(--text-muted); text-align:center;">

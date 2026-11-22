@@ -105,9 +105,25 @@
   --radius-xl: 14px;
   --radius-full: 9999px;
 
-  /* Layout */
+  /* Layout & Studio Shell */
   --header-height: 64px;
   --max-content-width: 1200px;
+  --sidebar-width: 256px;
+  --sidebar-collapsed-width: 72px;
+  --topbar-height: 58px;
+  --stage-bg: #F2EEF5;
+  --dock-glass-bg: rgba(255, 255, 255, 0.88);
+  --dock-glass-border: rgba(42, 127, 98, 0.16);
+  --dock-glass-shadow: 0 20px 48px -10px rgba(21, 36, 39, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+
+  /* Radii — Linear/Raycast 8-10px standard */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
 
   /* Transitions — Snappy, fluid */
   --transition-fast: 140ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -116,6 +132,10 @@
 
 /* Color System — Dark Mode (Deep Nordic Pine-Slate) */
 [data-theme="dark"] {
+  --stage-bg: #0A1113;
+  --dock-glass-bg: rgba(21, 34, 37, 0.88);
+  --dock-glass-border: rgba(52, 156, 120, 0.24);
+  --dock-glass-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   --bg-primary: #0E1719;          /* Deep Nordic night */
   --bg-secondary: #142023;
   --bg-tertiary: #192A2E;
