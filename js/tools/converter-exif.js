@@ -53,6 +53,7 @@ export class ConverterExifTool {
     this.convertAllBtn = document.getElementById('converter-convert-all-btn');
     this.downloadZipBtn = document.getElementById('converter-download-zip-btn');
     this.clearAllBtn = document.getElementById('converter-clear-all-btn');
+    this.renamePrefixInput = document.getElementById('converter-rename-prefix');
 
     // Cards grid & empty state
     this.cardsContainer = document.getElementById('converter-cards-grid');
@@ -464,10 +465,18 @@ export class ConverterExifTool {
     }
 
     const ext = this.getFormatExt();
-    const zipFiles = readyItems.map((item) => {
-      const originalBaseName = item.file.name.substring(0, item.file.name.lastIndexOf('.')) || item.file.name;
+    const prefix = this.renamePrefixInput ? this.renamePrefixInput.value.trim() : '';
+
+    const zipFiles = readyItems.map((item, idx) => {
+      let filename;
+      if (prefix) {
+        filename = `${prefix}-${String(idx + 1).padStart(2, '0')}.${ext}`;
+      } else {
+        const originalBaseName = item.file.name.substring(0, item.file.name.lastIndexOf('.')) || item.file.name;
+        filename = `${originalBaseName}-clean.${ext}`;
+      }
       return {
-        name: `${originalBaseName}-clean.${ext}`,
+        name: filename,
         blob: item.resultBlob
       };
     });

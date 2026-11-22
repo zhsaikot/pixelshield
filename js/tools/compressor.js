@@ -65,10 +65,23 @@ export class CompressorTool {
     this.compressAllBtn = document.getElementById('compressor-compress-all-btn');
     this.downloadZipBtn = document.getElementById('compressor-download-zip-btn');
     this.clearAllBtn = document.getElementById('compressor-clear-all-btn');
+    this.renamePrefixInput = document.getElementById('compressor-rename-prefix');
 
     // Cards list & empty state
     this.cardsContainer = document.getElementById('compressor-cards-grid');
     this.emptyState = document.getElementById('compressor-empty-state');
+
+    // Compare modal elements
+    this.compareModal = document.getElementById('compare-modal-backdrop');
+    this.compareCloseBtn = document.getElementById('compare-modal-close');
+    this.compareSliderContainer = document.getElementById('compare-slider-container');
+    this.compareLayerBefore = document.getElementById('compare-layer-before');
+    this.compareImgBefore = document.getElementById('compare-img-before');
+    this.compareImgAfter = document.getElementById('compare-img-after');
+    this.compareDividerHandle = document.getElementById('compare-divider-handle');
+    this.compareTagBefore = document.getElementById('compare-tag-before');
+    this.compareTagAfter = document.getElementById('compare-tag-after');
+    this.isComparing = false;
   }
 
   bindEvents() {
@@ -162,6 +175,52 @@ export class CompressorTool {
     this.compressAllBtn.addEventListener('click', () => this.processAll());
     this.downloadZipBtn.addEventListener('click', () => this.downloadAllZip());
     this.clearAllBtn.addEventListener('click', () => this.clearAll());
+
+    // Compare Modal Events
+    if (this.compareCloseBtn) {
+      this.compareCloseBtn.addEventListener('click', () => this.closeCompareModal());
+    }
+    if (this.compareModal) {
+      this.compareModal.addEventListener('click', (e) => {
+        if (e.target === this.compareModal) this.closeCompareModal();
+      });
+    }
+
+    if (this.compareSliderContainer) {
+      const updateSplit = (clientX) => {
+        const rect = this.compareSliderContainer.getBoundingClientRect();
+        const offsetX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+        const pct = (offsetX / rect.width) * 100;
+        this.compareLayerBefore.style.width = `${pct}%`;
+        this.compareDividerHandle.style.left = `${pct}%`;
+      };
+
+      this.compareSliderContainer.addEventListener('mousedown', (e) => {
+        this.isComparing = true;
+        updateSplit(e.clientX);
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (this.isComparing) updateSplit(e.clientX);
+      });
+      window.addEventListener('mouseup', () => {
+        this.isComparing = false;
+      });
+
+      this.compareSliderContainer.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          this.isComparing = true;
+          updateSplit(e.touches[0].clientX);
+        }
+      }, { passive: true });
+      window.addEventListener('touchmove', (e) => {
+        if (this.isComparing && e.touches.length === 1) {
+          updateSplit(e.touches[0].clientX);
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => {
+        this.isComparing = false;
+      });
+    }
   }
 
   setMode(mode) {
@@ -384,14 +443,23 @@ export class CompressorTool {
             </svg>
             Remove
           </button>
-          <button class="btn btn-sm btn-primary download-btn" ${!item.resultBlob ? 'disabled' : ''}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Download
-          </button>
+          <div style="display:flex; gap:0.35rem;">
+            <button class="btn btn-sm btn-outline compare-btn" ${!item.resultBlob ? 'disabled' : ''} title="Compare visual quality">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Compare
+            </button>
+            <button class="btn btn-sm btn-primary download-btn" ${!item.resultBlob ? 'disabled' : ''}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -399,6 +467,9 @@ export class CompressorTool {
     // Event listeners for card buttons
     const removeBtn = card.querySelector('.remove-btn');
     removeBtn.addEventListener('click', () => this.removeItem(item.id));
+
+    const compareBtn = card.querySelector('.compare-btn');
+    compareBtn.addEventListener('click', () => this.openCompareModal(item));
 
     const downloadBtn = card.querySelector('.download-btn');
     downloadBtn.addEventListener('click', () => this.downloadItem(item));
@@ -433,6 +504,11 @@ export class CompressorTool {
     const downloadBtn = card.querySelector('.download-btn');
     if (downloadBtn) {
       downloadBtn.disabled = !item.resultBlob || item.status === 'error';
+    }
+
+    const compareBtn = card.querySelector('.compare-btn');
+    if (compareBtn) {
+      compareBtn.disabled = !item.resultBlob || item.status === 'error';
     }
   }
 
@@ -500,6 +576,39 @@ export class CompressorTool {
     this.app.showToast(`Downloaded ${filename}`, 'success');
   }
 
+  openCompareModal(item) {
+    if (!item.resultBlob || !this.compareModal) return;
+
+    const origUrl = item.imgData.img.src;
+    const compUrl = URL.createObjectURL(item.resultBlob);
+
+    this.compareImgBefore.src = origUrl;
+    this.compareImgAfter.src = compUrl;
+
+    if (this.compareTagBefore) {
+      this.compareTagBefore.textContent = `Original (${formatBytes(item.imgData.size)})`;
+    }
+    if (this.compareTagAfter) {
+      this.compareTagAfter.textContent = `Compressed (${formatBytes(item.resultBlob.size)} · ${item.savings ? item.savings.label : ''})`;
+    }
+
+    // Reset split to 50%
+    if (this.compareLayerBefore) this.compareLayerBefore.style.width = '50%';
+    if (this.compareDividerHandle) this.compareDividerHandle.style.left = '50%';
+
+    this.compareModal.classList.add('active');
+  }
+
+  closeCompareModal() {
+    if (!this.compareModal) return;
+    this.compareModal.classList.remove('active');
+    if (this.compareImgAfter.src && this.compareImgAfter.src.startsWith('blob:')) {
+      URL.revokeObjectURL(this.compareImgAfter.src);
+    }
+    this.compareImgBefore.src = '';
+    this.compareImgAfter.src = '';
+  }
+
   async downloadAllZip() {
     const readyItems = this.files.filter((f) => f.resultBlob);
     if (readyItems.length === 0) {
@@ -508,10 +617,18 @@ export class CompressorTool {
     }
 
     const ext = this.getOutputExtension();
-    const zipFiles = readyItems.map((item) => {
-      const originalBaseName = item.file.name.substring(0, item.file.name.lastIndexOf('.')) || item.file.name;
+    const prefix = this.renamePrefixInput ? this.renamePrefixInput.value.trim() : '';
+
+    const zipFiles = readyItems.map((item, idx) => {
+      let filename;
+      if (prefix) {
+        filename = `${prefix}-${String(idx + 1).padStart(2, '0')}.${ext}`;
+      } else {
+        const originalBaseName = item.file.name.substring(0, item.file.name.lastIndexOf('.')) || item.file.name;
+        filename = `${originalBaseName}-compressed.${ext}`;
+      }
       return {
-        name: `${originalBaseName}-compressed.${ext}`,
+        name: filename,
         blob: item.resultBlob
       };
     });

@@ -7,6 +7,10 @@
 import { CompressorTool } from './tools/compressor.js';
 import { ConverterExifTool } from './tools/converter-exif.js';
 import { PassportMakerTool } from './tools/passport-maker.js';
+import { ImageToPdfTool } from './tools/image-to-pdf.js';
+import { RedactorTool } from './tools/redactor.js';
+import { SignatureMakerTool } from './tools/signature-maker.js';
+import { AssetGeneratorTool } from './tools/asset-generator.js';
 
 class App {
   constructor() {
@@ -86,7 +90,7 @@ class App {
 
   handleHashChange() {
     const rawHash = window.location.hash.replace('#', '').toLowerCase();
-    const validTabs = ['compress', 'convert', 'passport'];
+    const validTabs = ['compress', 'convert', 'passport', 'img-to-pdf', 'redact', 'signature', 'assets'];
     const activeTab = validTabs.includes(rawHash) ? rawHash : 'compress';
 
     this.switchTab(activeTab);
@@ -174,6 +178,10 @@ class App {
     this.compressor = new CompressorTool(this);
     this.converter = new ConverterExifTool(this);
     this.passport = new PassportMakerTool(this);
+    this.imageToPdf = new ImageToPdfTool(this);
+    this.redactor = new RedactorTool(this);
+    this.signature = new SignatureMakerTool(this);
+    this.assets = new AssetGeneratorTool(this);
   }
 
   bindGlobalEvents() {

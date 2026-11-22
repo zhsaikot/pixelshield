@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   
   <title>PixelShield — Private Media Lab</title>
-  <meta name="description" content="Professional, 100% client-side privacy image utilities: smart image compression, target-KB optimization, WebP/JPEG/PNG conversion, EXIF metadata stripping, and passport & ID photo sheet studio.">
+  <meta name="description" content="Professional, 100% client-side privacy image utilities: smart image compression, target-KB optimization, WebP/JPEG/PNG conversion, EXIF stripping, multi-image to PDF, photo redactor, job portal signature cleaner, watermark studio, and favicon/social asset generator.">
   <meta name="theme-color" content="#2463EB">
   
   <!-- Favicon (Inline SVG Data URI) -->
@@ -22,8 +22,9 @@
   <link rel="stylesheet" href="./css/variables.css">
   <link rel="stylesheet" href="./css/style.css">
 
-  <!-- JSZip CDN for batch zip downloads -->
+  <!-- CDN Dependencies for 100% Local Processing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -60,37 +61,82 @@
     </div>
   </header>
 
-  <!-- Navigation Tab Bar -->
+  <!-- Navigation Tab Bar (7 High-Utility Tools) -->
   <nav class="nav-section" aria-label="Tool Navigation">
     <div class="nav-container">
+      <!-- Tool 1 -->
       <button class="nav-tab-btn active" data-tab="compress" aria-selected="true">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="4 14 10 14 10 20"></polyline>
           <polyline points="20 10 14 10 14 4"></polyline>
           <line x1="14" y1="10" x2="21" y2="3"></line>
           <line x1="3" y1="21" x2="10" y2="14"></line>
         </svg>
-        <span>Smart Compressor</span>
+        <span>Compressor</span>
         <span class="tab-badge">Target-KB</span>
       </button>
 
+      <!-- Tool 2 -->
       <button class="nav-tab-btn" data-tab="convert" aria-selected="false">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
           <path d="M10 9l5 3-5 3V9z"></path>
         </svg>
-        <span>Format &amp; EXIF Stripper</span>
-        <span class="tab-badge">WebP / JPG / PNG</span>
+        <span>Converter &amp; EXIF</span>
+        <span class="tab-badge">WebP / JPG</span>
       </button>
 
+      <!-- Tool 3 -->
       <button class="nav-tab-btn" data-tab="passport" aria-selected="false">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
           <circle cx="12" cy="7" r="4"></circle>
           <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"></rect>
         </svg>
-        <span>Passport &amp; ID Studio</span>
-        <span class="tab-badge">Print Sheets</span>
+        <span>Passport &amp; ID</span>
+        <span class="tab-badge">300 DPI</span>
+      </button>
+
+      <!-- Tool 4 (New) -->
+      <button class="nav-tab-btn" data-tab="img-to-pdf" aria-selected="false">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        <span>Images to PDF</span>
+        <span class="tab-badge">Pages</span>
+      </button>
+
+      <!-- Tool 5 (New) -->
+      <button class="nav-tab-btn" data-tab="redact" aria-selected="false">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>
+        <span>Redactor &amp; Blur</span>
+        <span class="tab-badge">Censor</span>
+      </button>
+
+      <!-- Tool 6 (New) -->
+      <button class="nav-tab-btn" data-tab="signature" aria-selected="false">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        <span>Signature &amp; Watermark</span>
+        <span class="tab-badge">Portals</span>
+      </button>
+
+      <!-- Tool 7 (New) -->
+      <button class="nav-tab-btn" data-tab="assets" aria-selected="false">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+        <span>Favicon &amp; Social</span>
+        <span class="tab-badge">Assets</span>
       </button>
     </div>
   </nav>
@@ -211,7 +257,7 @@
         </div>
       </div>
 
-      <!-- Batch Actions Bar -->
+      <!-- Batch Actions Bar with Smart Rename -->
       <div id="compressor-batch-actions" class="batch-actions-bar" style="display:none;">
         <div class="batch-stats">
           <span id="compressor-batch-count">0 files</span>
@@ -219,6 +265,7 @@
           <span id="compressor-batch-savings" class="batch-savings-highlight"></span>
         </div>
         <div class="btn-group">
+          <input type="text" id="compressor-rename-prefix" class="input-text batch-rename-input" placeholder="Rename prefix (e.g. photo)" title="Optional prefix to rename files sequentially in the ZIP (photo-01.jpg, photo-02.jpg)">
           <button id="compressor-compress-all-btn" class="btn btn-outline btn-sm">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -339,7 +386,7 @@
         </div>
       </div>
 
-      <!-- Batch Actions Bar -->
+      <!-- Batch Actions Bar with Smart Rename -->
       <div id="converter-batch-actions" class="batch-actions-bar" style="display:none;">
         <div class="batch-stats">
           <span id="converter-batch-count">0 files</span>
@@ -347,6 +394,7 @@
           <span id="converter-batch-savings" class="batch-savings-highlight"></span>
         </div>
         <div class="btn-group">
+          <input type="text" id="converter-rename-prefix" class="input-text batch-rename-input" placeholder="Rename prefix (e.g. clean)" title="Optional prefix to rename files sequentially in the ZIP">
           <button id="converter-convert-all-btn" class="btn btn-outline btn-sm">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -540,7 +588,656 @@
 
     </section>
 
+    <!-- =======================================================================
+         TOOL 4: MULTI-IMAGE TO PDF STUDIO
+         ======================================================================= -->
+    <section id="tab-img-to-pdf" class="tab-pane" aria-labelledby="tab-img-to-pdf">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">Multi-image to PDF studio</h1>
+        </div>
+        <p class="tool-description">
+          Combine multiple photos, scanned receipts, and documents into a single high-quality PDF. Reorder pages and customize paper formats 100% locally.
+        </p>
+      </div>
+
+      <!-- Dropzone -->
+      <div id="pdf-dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload images for PDF generation">
+        <input type="file" id="pdf-file-input" class="file-input-hidden" multiple accept="image/*">
+        <div class="dropzone-inner">
+          <div class="dropzone-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <div class="dropzone-heading">Drop images to convert into a PDF</div>
+          <div class="dropzone-subtext">JPG, PNG, WebP · Drag cards to reorder pages</div>
+          <button type="button" class="dropzone-cta-btn">Choose images</button>
+        </div>
+      </div>
+
+      <!-- PDF Settings Toolbar -->
+      <div class="toolbar-card">
+        <div class="toolbar-header">
+          <div class="toolbar-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            PDF Page &amp; Layout Settings
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label class="setting-label" for="pdf-page-size">Page Size</label>
+            <select id="pdf-page-size" class="select-dropdown">
+              <option value="a4" selected>A4 (Standard 210 × 297 mm)</option>
+              <option value="letter">US Letter (8.5 × 11 in)</option>
+              <option value="fit">Fit to Image (Exact aspect ratio)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <label class="setting-label" for="pdf-orientation">Orientation</label>
+            <select id="pdf-orientation" class="select-dropdown">
+              <option value="portrait" selected>Portrait</option>
+              <option value="landscape">Landscape</option>
+              <option value="auto">Auto (Match image ratio)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <label class="setting-label" for="pdf-margin">Page Margins</label>
+            <select id="pdf-margin" class="select-dropdown">
+              <option value="0" selected>None (Full bleed / 0 mm)</option>
+              <option value="10">Small (10 mm)</option>
+              <option value="20">Medium (20 mm)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-label">
+              <span>Image Quality</span>
+              <span id="pdf-quality-val" class="setting-value-badge">85%</span>
+            </div>
+            <input type="range" id="pdf-quality-slider" class="range-slider" min="50" max="100" value="85">
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Actions Bar -->
+      <div id="pdf-batch-actions" class="batch-actions-bar" style="display:none;">
+        <div class="batch-stats">
+          <span id="pdf-page-count">0 pages</span>
+          <span>·</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Use arrows or drag cards to rearrange</span>
+        </div>
+        <div class="btn-group">
+          <input type="text" id="pdf-filename-input" class="input-text batch-rename-input" value="combined-document.pdf" placeholder="Filename.pdf" style="max-width:200px;">
+          <button id="pdf-generate-btn" class="btn btn-primary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Generate &amp; Download PDF
+          </button>
+          <button id="pdf-clear-all-btn" class="btn btn-danger-ghost btn-sm">Clear all</button>
+        </div>
+      </div>
+
+      <!-- Reorderable Page Cards Grid -->
+      <div id="pdf-pages-grid" class="pdf-pages-grid" style="display:none;"></div>
+
+      <!-- Empty State -->
+      <div id="pdf-empty-state" class="empty-state">
+        <div class="empty-state-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+        </div>
+        <div style="font-weight:600; font-size:0.95rem; color:var(--text-primary);">No pages added yet</div>
+        <p style="font-size:0.84rem;">Drop multiple images above to assemble your PDF document.</p>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         TOOL 5: PRIVACY REDACTOR / BLUR & CENSOR TOOL
+         ======================================================================= -->
+    <section id="tab-redact" class="tab-pane" aria-labelledby="tab-redact">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">Privacy redactor &amp; blur studio</h1>
+        </div>
+        <p class="tool-description">
+          Censor sensitive personal details, NID cards, phone numbers, faces, and amounts using Gaussian blur, pixelation, or black bars.
+        </p>
+      </div>
+
+      <!-- Dropzone -->
+      <div id="redact-dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload image to redact">
+        <input type="file" id="redact-file-input" class="file-input-hidden" accept="image/*">
+        <div class="dropzone-inner">
+          <div class="dropzone-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </div>
+          <div class="dropzone-heading">Drop screenshot or photo to redact</div>
+          <div class="dropzone-subtext">Drag rectangles over sensitive text or faces to censor</div>
+          <button type="button" class="dropzone-cta-btn">Choose image</button>
+        </div>
+      </div>
+
+      <!-- Redactor Workspace (Active when loaded) -->
+      <div id="redact-workspace" class="redactor-workspace" style="display:none;">
+        
+        <!-- Toolbar Card -->
+        <div class="toolbar-card" style="margin-bottom:0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            
+            <!-- Redaction Style Switcher -->
+            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+              <span style="font-size:0.82rem; font-weight:600; color:var(--text-secondary);">Redaction Style:</span>
+              <div class="pill-toggle-group">
+                <button type="button" class="pill-btn redact-style-btn active" data-style="blur">Gaussian Blur</button>
+                <button type="button" class="pill-btn redact-style-btn" data-style="mosaic">Pixelate (Mosaic)</button>
+                <button type="button" class="pill-btn redact-style-btn" data-style="blackout">Solid Black Bar</button>
+              </div>
+            </div>
+
+            <!-- Intensity Slider -->
+            <div style="display:flex; align-items:center; gap:0.5rem; width:220px;">
+              <span style="font-size:0.8rem; font-weight:500; color:var(--text-secondary);">Intensity:</span>
+              <input type="range" id="redact-intensity-slider" class="range-slider" min="4" max="32" value="12">
+              <span id="redact-intensity-val" class="setting-value-badge">12px</span>
+            </div>
+
+            <!-- Actions -->
+            <div class="btn-group">
+              <button id="redact-undo-btn" class="btn btn-sm btn-outline" disabled title="Undo last redaction">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="1 4 1 10 7 10"></polyline>
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+                Undo
+              </button>
+              <button id="redact-reset-btn" class="btn btn-sm btn-ghost" title="Reset all redactions">Reset</button>
+              <button id="redact-change-photo-btn" class="btn btn-sm btn-outline">Change image</button>
+              
+              <select id="redact-format-select" class="select-dropdown" style="width:auto; padding:0.3rem 0.5rem; font-size:0.8rem;">
+                <option value="image/png" selected>PNG (Clean)</option>
+                <option value="image/jpeg">JPEG (High Res)</option>
+              </select>
+
+              <button id="redact-download-btn" class="btn btn-sm btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download Clean Image
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Viewport & Canvas -->
+        <div class="redactor-viewport" id="redact-viewport">
+          <div class="redactor-canvas-wrapper" id="redact-canvas-wrapper">
+            <canvas id="redact-canvas"></canvas>
+            <div class="redactor-selection-rect" id="redact-selection-rect"></div>
+          </div>
+        </div>
+
+        <p style="font-size:0.8rem; color:var(--text-muted); text-align:center;">
+          💡 Drag a box over any text, ID number, or face to redact. Exported images strip 100% of EXIF metadata.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         TOOL 6: JOB PORTAL SIGNATURE & WATERMARK STUDIO
+         ======================================================================= -->
+    <section id="tab-signature" class="tab-pane" aria-labelledby="tab-signature">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">Signature &amp; watermark studio</h1>
+          <div class="subtabs-nav">
+            <button id="sig-subtab-cleaner" class="subtab-btn active">Signature Cleaner &amp; Resizer</button>
+            <button id="sig-subtab-watermark" class="subtab-btn">Watermark Overlay</button>
+          </div>
+        </div>
+        <p class="tool-description">
+          Prepare clean, transparent-background signatures formatted to online government and job portal dimensions (e.g. 300×80 px), or apply protective watermarks.
+        </p>
+      </div>
+
+      <!-- Subtab A: Signature Cleaner -->
+      <div id="sig-section-cleaner">
+        
+        <!-- Input Mode Switcher -->
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+          <div class="pill-toggle-group">
+            <button id="sig-mode-upload" class="pill-btn active">Upload Signature Photo</button>
+            <button id="sig-mode-draw" class="pill-btn">Draw on Signature Pad</button>
+          </div>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Threshold adjusts paper background elimination</span>
+        </div>
+
+        <div class="signature-workspace">
+          
+          <!-- Left: Input Area (Upload Dropzone or Drawing Pad) -->
+          <div class="toolbar-card" style="margin-bottom:0;">
+            <div id="sig-upload-area">
+              <div id="sig-dropzone" class="dropzone" style="margin-bottom:0; padding:2rem 1rem;">
+                <input type="file" id="sig-file-input" class="file-input-hidden" accept="image/*">
+                <div class="dropzone-inner">
+                  <div class="dropzone-icon-box">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </div>
+                  <div class="dropzone-heading">Upload photo of signature</div>
+                  <div class="dropzone-subtext">Phone photo on paper or scanned image</div>
+                  <button type="button" class="dropzone-cta-btn">Choose signature</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Drawing Pad -->
+            <div id="sig-draw-area" style="display:none;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:0.82rem; font-weight:600; color:var(--text-secondary);">Draw Signature:</span>
+                <div style="display:flex; gap:0.4rem; align-items:center;">
+                  <select id="sig-pad-color" class="select-dropdown" style="padding:0.2rem 0.4rem; font-size:0.75rem;">
+                    <option value="#000000" selected>Black Ink</option>
+                    <option value="#003399">Blue Ink</option>
+                  </select>
+                  <input type="range" id="sig-pad-width" class="range-slider" min="1" max="8" value="3" style="width:70px;" title="Pen width">
+                  <button type="button" id="sig-pad-clear-btn" class="btn btn-sm btn-ghost" style="font-size:0.75rem;">Clear</button>
+                </div>
+              </div>
+              <div class="signature-pad-container">
+                <canvas id="sig-pad-canvas"></canvas>
+              </div>
+            </div>
+
+            <!-- Threshold & Binarization Controls -->
+            <div style="margin-top:1.25rem; display:flex; flex-direction:column; gap:0.85rem;">
+              <div class="setting-item">
+                <div class="setting-label">
+                  <span>Paper Background Removal Threshold</span>
+                  <span id="sig-threshold-val" class="setting-value-badge">190</span>
+                </div>
+                <input type="range" id="sig-threshold-slider" class="range-slider" min="50" max="250" value="190">
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                <label class="toggle-switch-label" style="font-size:0.8rem;">
+                  <input type="checkbox" id="sig-invert-toggle" class="switch-input">
+                  <span>Invert Colors (Dark Paper)</span>
+                </label>
+
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span style="font-size:0.8rem; color:var(--text-secondary);">Output:</span>
+                  <select id="sig-format-select" class="select-dropdown" style="padding:0.25rem 0.5rem; font-size:0.8rem; width:auto;">
+                    <option value="image/png" selected>Transparent PNG</option>
+                    <option value="image/jpeg">White Paper JPG</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right: Portal Presets & Clean Preview -->
+          <div class="toolbar-card" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <span style="font-size:0.88rem; font-weight:600;">Cleaned Signature Preview</span>
+              <span id="sig-meta-badge" class="badge" style="background:var(--accent-primary-subtle); color:var(--accent-primary); font-size:0.72rem; font-weight:600; padding:0.1rem 0.4rem; border-radius:var(--radius-sm); border:1px solid var(--accent-primary-border);">
+                300 × 80 px · Target ≤ 60 KB
+              </span>
+            </div>
+
+            <div class="signature-preview-box">
+              <canvas id="sig-preview-canvas"></canvas>
+            </div>
+
+            <!-- Portal Presets -->
+            <div style="margin-top:1rem;">
+              <span style="font-size:0.8rem; font-weight:600; color:var(--text-secondary);">Portal Size &amp; KB Presets:</span>
+              <div class="chips-container" style="margin-top:0.35rem;">
+                <button type="button" class="chip-btn sig-preset-chip active" data-w="300" data-h="80" data-kb="60">Govt / Job Portal (300 × 80 px ≤ 60 KB)</button>
+                <button type="button" class="chip-btn sig-preset-chip" data-w="300" data-h="300" data-kb="100">Square Document (300 × 300 px ≤ 100 KB)</button>
+                <button type="button" class="chip-btn sig-preset-chip" data-w="500" data-h="150" data-kb="150">High-Res (500 × 150 px ≤ 150 KB)</button>
+              </div>
+            </div>
+
+            <!-- Custom Size Inputs -->
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; margin-top:0.85rem;">
+              <div>
+                <label style="font-size:0.72rem; color:var(--text-muted);">Width (px)</label>
+                <input type="number" id="sig-custom-width" class="input-number" value="300">
+              </div>
+              <div>
+                <label style="font-size:0.72rem; color:var(--text-muted);">Height (px)</label>
+                <input type="number" id="sig-custom-height" class="input-number" value="80">
+              </div>
+              <div>
+                <label style="font-size:0.72rem; color:var(--text-muted);">Max KB</label>
+                <input type="number" id="sig-custom-maxkb" class="input-number" value="60">
+              </div>
+            </div>
+
+            <button id="sig-download-btn" class="btn btn-primary btn-lg" style="width:100%; margin-top:1.25rem;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download Clean Signature
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Subtab B: Watermark Overlay Studio -->
+      <div id="sig-section-watermark" style="display:none;">
+        
+        <div id="wm-dropzone" class="dropzone">
+          <input type="file" id="wm-file-input" class="file-input-hidden" accept="image/*">
+          <div class="dropzone-inner">
+            <div class="dropzone-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+            </div>
+            <div class="dropzone-heading">Drop image to add protective watermark</div>
+            <div class="dropzone-subtext">Apply custom text copyright or logo overlays</div>
+            <button type="button" class="dropzone-cta-btn">Choose image</button>
+          </div>
+        </div>
+
+        <div id="wm-workspace" class="passport-studio-layout" style="display:none;">
+          
+          <!-- Canvas Viewport -->
+          <div class="passport-canvas-workspace">
+            <div class="canvas-viewport-container" style="cursor:default;">
+              <canvas id="wm-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Watermark Controls -->
+          <div class="toolbar-card" style="margin-bottom:0;">
+            <div style="margin-bottom:0.85rem;">
+              <div class="pill-toggle-group">
+                <button type="button" id="wm-type-text" class="pill-btn active">Text Watermark</button>
+                <button type="button" id="wm-type-logo" class="pill-btn">Logo Image Watermark</button>
+              </div>
+            </div>
+
+            <!-- Text Options -->
+            <div id="wm-text-group" style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div class="setting-item">
+                <label class="setting-label">Watermark Text</label>
+                <input type="text" id="wm-text-input" class="input-text" value="CONFIDENTIAL">
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                <div class="setting-item">
+                  <label class="setting-label">Color</label>
+                  <input type="color" id="wm-color-picker" value="#ffffff" style="width:100%; height:34px; border:1px solid var(--border-strong); border-radius:var(--radius-sm); cursor:pointer;">
+                </div>
+                <div class="setting-item">
+                  <label class="setting-label">Placement</label>
+                  <select id="wm-position-select" class="select-dropdown">
+                    <option value="tiled" selected>Tiled Pattern</option>
+                    <option value="center">Center</option>
+                    <option value="bottom-right">Bottom Right</option>
+                    <option value="top-right">Top Right</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">
+                  <span>Font Size</span>
+                  <span id="wm-font-size-val" class="setting-value-badge">36px</span>
+                </div>
+                <input type="range" id="wm-font-size-slider" class="range-slider" min="16" max="96" value="36">
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">
+                  <span>Rotation</span>
+                  <span id="wm-rotation-val" class="setting-value-badge">-45°</span>
+                </div>
+                <input type="range" id="wm-rotation-slider" class="range-slider" min="-90" max="90" value="-45">
+              </div>
+            </div>
+
+            <!-- Logo Options -->
+            <div id="wm-logo-group" style="display:none; flex-direction:column; gap:0.75rem;">
+              <div class="setting-item">
+                <label class="setting-label">Upload Logo File</label>
+                <input type="file" id="wm-logo-file-input" class="input-text" accept="image/*">
+              </div>
+              <div class="setting-item">
+                <label class="setting-label">Logo Scale</label>
+                <input type="range" id="wm-logo-scale-slider" class="range-slider" min="10" max="70" value="25">
+              </div>
+            </div>
+
+            <!-- Opacity -->
+            <div class="setting-item" style="margin-top:0.75rem;">
+              <div class="setting-label">
+                <span>Opacity</span>
+                <span id="wm-opacity-val" class="setting-value-badge">50%</span>
+              </div>
+              <input type="range" id="wm-opacity-slider" class="range-slider" min="10" max="100" value="50">
+            </div>
+
+            <button id="wm-download-btn" class="btn btn-primary btn-lg" style="width:100%; margin-top:1.25rem;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download Watermarked Image
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         TOOL 7: FAVICON & SOCIAL MEDIA ASSET GENERATOR
+         ======================================================================= -->
+    <section id="tab-assets" class="tab-pane" aria-labelledby="tab-assets">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">Favicon &amp; social media asset studio</h1>
+          <div class="subtabs-nav">
+            <button id="asset-subtab-favicon" class="subtab-btn active">Favicon &amp; App Icon Suite</button>
+            <button id="asset-subtab-social" class="subtab-btn">Social Crop &amp; Blur-Pad</button>
+          </div>
+        </div>
+        <p class="tool-description">
+          Generate complete browser &amp; PWA favicon packages with ready-to-copy HTML tags, or resize graphics for Instagram, YouTube, and TikTok with blurred background fills.
+        </p>
+      </div>
+
+      <!-- Subtab A: Favicon Suite -->
+      <div id="asset-section-favicon">
+        
+        <div id="favicon-dropzone" class="dropzone">
+          <input type="file" id="favicon-file-input" class="file-input-hidden" accept="image/*">
+          <div class="dropzone-inner">
+            <div class="dropzone-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <circle cx="12" cy="12" r="4"></circle>
+              </svg>
+            </div>
+            <div class="dropzone-heading">Drop square logo or icon to generate favicon suite</div>
+            <div class="dropzone-subtext">Generates 16×16, 32×32, 48×48, Apple Touch (180×180), and Android (512×512) icons</div>
+            <button type="button" class="dropzone-cta-btn">Choose logo</button>
+          </div>
+        </div>
+
+        <div id="favicon-workspace" style="display:none;">
+          <div class="batch-actions-bar">
+            <div class="batch-stats">
+              <span>5 icon assets generated</span>
+              <span>·</span>
+              <span style="color:var(--color-success); font-weight:600;">PNG + HTML link snippet</span>
+            </div>
+            <div class="btn-group">
+              <button id="favicon-download-zip-btn" class="btn btn-primary btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download Favicon Pack (.ZIP)
+              </button>
+              <button id="favicon-change-photo-btn" class="btn btn-outline btn-sm">Change logo</button>
+            </div>
+          </div>
+
+          <!-- Icons Grid -->
+          <div id="favicon-pack-grid" class="favicon-pack-grid"></div>
+
+          <!-- HTML Link Snippet -->
+          <div class="toolbar-card" style="margin-top:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+              <span style="font-size:0.85rem; font-weight:600;">HTML Header Links:</span>
+              <button id="favicon-copy-snippet-btn" class="btn btn-sm btn-outline">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy HTML Snippet
+              </button>
+            </div>
+            <div class="code-snippet-box" id="favicon-code-snippet">&lt;link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"&gt;
+&lt;link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"&gt;
+&lt;link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"&gt;</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Subtab B: Social Crop & Blur-Pad -->
+      <div id="asset-section-social" style="display:none;">
+        
+        <div id="social-dropzone" class="dropzone">
+          <input type="file" id="social-file-input" class="file-input-hidden" accept="image/*">
+          <div class="dropzone-inner">
+            <div class="dropzone-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              </svg>
+            </div>
+            <div class="dropzone-heading">Drop graphic to resize for social media</div>
+            <div class="dropzone-subtext">Instagram (1:1), Stories/Reels (9:16), YouTube (16:9) with blurred fills</div>
+            <button type="button" class="dropzone-cta-btn">Choose graphic</button>
+          </div>
+        </div>
+
+        <div id="social-workspace" class="passport-studio-layout" style="display:none;">
+          
+          <div class="passport-canvas-workspace">
+            <div class="canvas-viewport-container" style="cursor:default;">
+              <canvas id="social-preview-canvas"></canvas>
+            </div>
+          </div>
+
+          <div class="toolbar-card" style="margin-bottom:0;">
+            <div class="setting-item" style="margin-bottom:1rem;">
+              <label class="setting-label" for="social-preset-select">Social Media Preset</label>
+              <select id="social-preset-select" class="select-dropdown">
+                <option value="instagram-square" selected>1:1 Square (1080 × 1080 px · Instagram Post / LinkedIn)</option>
+                <option value="story-reel">9:16 Story / Reel (1080 × 1920 px · TikTok / Shorts)</option>
+                <option value="youtube-thumb">16:9 Landscape (1280 × 720 px · YouTube / X)</option>
+                <option value="instagram-portrait">4:5 Portrait (1080 × 1350 px · Instagram Feed)</option>
+              </select>
+            </div>
+
+            <div class="setting-item" style="margin-bottom:1.25rem;">
+              <label class="setting-label" for="social-fit-mode-select">Resize &amp; Pad Mode</label>
+              <select id="social-fit-mode-select" class="select-dropdown">
+                <option value="blur-pad" selected>Fit with Blurred Background Fill</option>
+                <option value="center-crop">Center-Crop (Fill Full Screen)</option>
+              </select>
+            </div>
+
+            <div class="btn-group" style="width:100%; flex-direction:column;">
+              <button id="social-download-btn" class="btn btn-primary btn-lg" style="width:100%;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download Social Graphic (High-Res)
+              </button>
+              <button id="social-change-photo-btn" class="btn btn-outline" style="width:100%;">Change Graphic</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
   </main>
+
+  <!-- Interactive Before/After Split-Screen Compare Modal -->
+  <div id="compare-modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="compare-modal-title">
+    <div class="modal-dialog compare-modal-dialog">
+      <div class="modal-header">
+        <h3 id="compare-modal-title" class="modal-title">Compare Original vs Compressed</h3>
+        <button id="compare-modal-close" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1rem;">
+        <div class="compare-slider-container" id="compare-slider-container">
+          <div class="compare-tag-badge compare-tag-before" id="compare-tag-before">Original</div>
+          <div class="compare-tag-badge compare-tag-after" id="compare-tag-after">Compressed</div>
+          
+          <div class="compare-img-layer compare-img-after">
+            <img id="compare-img-after" src="" alt="Compressed image" />
+          </div>
+          <div class="compare-img-layer compare-img-before" id="compare-layer-before">
+            <img id="compare-img-before" src="" alt="Original image" />
+          </div>
+          <div class="compare-divider-handle" id="compare-divider-handle">
+            <div class="compare-handle-knob">↔</div>
+          </div>
+        </div>
+        <p style="font-size:0.78rem; color:var(--text-muted); text-align:center;">
+          Drag the center handle horizontally or move your pointer across the canvas to inspect visual fidelity.
+        </p>
+      </div>
+    </div>
+  </div>
 
   <!-- EXIF / Metadata Inspection Modal Dialog -->
   <div id="exif-modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="exif-modal-title">
