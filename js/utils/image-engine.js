@@ -78,6 +78,8 @@ export function loadImage(fileOrBlob) {
       }
 
       resolve({
+        file: fileOrBlob,
+        blob: fileOrBlob,
         img,
         objectUrl,
         thumbUrl: thumbDataUrl || objectUrl,

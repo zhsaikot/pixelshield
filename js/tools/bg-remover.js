@@ -28,6 +28,8 @@ export class BackgroundRemoverTool {
     this.feather = 4; // 0 - 20
     this.edgeInset = 0; // -5 to +5
     this.eyedropperActive = false;
+    this.keyerContiguous = true; // Protects subject & face from being cut out
+    this.lastSamplePoint = null;
     
     // Brush / Touch-Up State
     this.brushMode = 'none'; // 'none', 'restore', 'erase'
@@ -92,6 +94,7 @@ export class BackgroundRemoverTool {
     this.eyedropperBtn = document.getElementById('bgrem-eyedropper-btn');
     this.keyColorPreview = document.getElementById('bgrem-key-color-preview');
     this.autoDetectColorBtn = document.getElementById('bgrem-auto-detect-btn');
+    this.contiguousCheck = document.getElementById('bgrem-contiguous-check');
 
     // Touch-Up Brushes
     this.brushNoneBtn = document.getElementById('bgrem-brush-none-btn');
@@ -215,6 +218,18 @@ export class BackgroundRemoverTool {
         this.autoDetectBackgroundColor();
         this.updateKeyerMask();
         this.app.showToast('Auto-detected background color from corners', 'info', 2000);
+      });
+    }
+
+    if (this.contiguousCheck) {
+      this.contiguousCheck.addEventListener('change', (e) => {
+        this.keyerContiguous = e.target.checked;
+        this.updateKeyerMask();
+        this.app.showToast(
+          this.keyerContiguous ? 'Subject Protection Active (Border flood-fill)' : 'Global Color Key Active',
+          'info',
+          1800
+        );
       });
     }
 
@@ -543,8 +558,14 @@ export class BackgroundRemoverTool {
 
       this.updateAiProgress(40, 'Neural segmentation in progress (100% private)...');
 
+      // Ensure input is a valid Blob or File
+      let inputSource = (this.currentImage && (this.currentImage.file || this.currentImage.blob)) || null;
+      if (!inputSource || !(inputSource instanceof Blob)) {
+        inputSource = await canvasToBlob(this.origCanvas, 'image/png');
+      }
+
       // Call removeBackground with progress tracking
-      const resultBlob = await imglyRemoveBackground(this.currentImage.file || this.origCanvas, {
+      const resultBlob = await imglyRemoveBackground(inputSource, {
         progress: (key, current, total) => {
           if (total > 0) {
             const pct = Math.min(95, Math.round((current / total) * 100));
@@ -661,6 +682,7 @@ export class BackgroundRemoverTool {
     const h = this.origCanvas.height;
     if (x < 0 || x >= w || y < 0 || y >= h) return;
 
+    this.lastSamplePoint = { x, y };
     const pixel = this.origCtx.getImageData(x, y, 1, 1).data;
     const r = pixel[0];
     const g = pixel[1];
@@ -707,37 +729,158 @@ export class BackgroundRemoverTool {
     const tg = this.colorKeyTarget.g;
     const tb = this.colorKeyTarget.b;
 
-    // Tolerance normalized to [0..441.67]
+    // Tolerance normalized to [0..441.67] Euclidean distance
     const maxDist = 441.67;
     const tolDist = (this.tolerance / 100) * maxDist;
     const featherDist = (this.feather / 20) * (tolDist * 0.7);
+    const cutoffDist = tolDist + featherDist;
+    const cutoffDistSq = cutoffDist * cutoffDist;
 
-    const len = src.length;
-    for (let i = 0; i < len; i += 4) {
-      const r = src[i];
-      const g = src[i + 1];
-      const b = src[i + 2];
+    const numPixels = w * h;
 
-      // Euclidean color distance
-      const dr = r - tr;
-      const dg = g - tg;
-      const db = b - tb;
-      const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+    if (this.keyerContiguous) {
+      // BORDER-CONNECTED FLOOD-FILL:
+      // Prevents keying out internal areas (e.g. face, eyes, teeth, clothes).
+      // Only pixels connected to the image boundaries or sampled point are treated as background.
+      const isBg = new Uint8Array(numPixels);
+      const queue = new Int32Array(numPixels);
+      let head = 0;
+      let tail = 0;
 
-      mask[i] = 255;
-      mask[i + 1] = 255;
-      mask[i + 2] = 255;
+      const isMatchingColor = (idx) => {
+        const pi = idx * 4;
+        const dr = src[pi] - tr;
+        const dg = src[pi + 1] - tg;
+        const db = src[pi + 2] - tb;
+        return (dr * dr + dg * dg + db * db) <= cutoffDistSq;
+      };
 
-      if (dist <= tolDist - featherDist) {
-        // Completely background
-        mask[i + 3] = 0;
-      } else if (dist < tolDist + featherDist && featherDist > 0) {
-        // Feathered edge transition
-        const factor = (dist - (tolDist - featherDist)) / (featherDist * 2);
-        mask[i + 3] = Math.max(0, Math.min(255, Math.round(factor * 255)));
-      } else {
-        // Completely foreground
-        mask[i + 3] = 255;
+      // Seed from all four outer image borders
+      for (let x = 0; x < w; x++) {
+        const topIdx = x;
+        if (isMatchingColor(topIdx) && isBg[topIdx] === 0) {
+          isBg[topIdx] = 1;
+          queue[tail++] = topIdx;
+        }
+        const btmIdx = (h - 1) * w + x;
+        if (isMatchingColor(btmIdx) && isBg[btmIdx] === 0) {
+          isBg[btmIdx] = 1;
+          queue[tail++] = btmIdx;
+        }
+      }
+
+      for (let y = 1; y < h - 1; y++) {
+        const leftIdx = y * w;
+        if (isMatchingColor(leftIdx) && isBg[leftIdx] === 0) {
+          isBg[leftIdx] = 1;
+          queue[tail++] = leftIdx;
+        }
+        const rightIdx = y * w + (w - 1);
+        if (isMatchingColor(rightIdx) && isBg[rightIdx] === 0) {
+          isBg[rightIdx] = 1;
+          queue[tail++] = rightIdx;
+        }
+      }
+
+      // If user clicked with eyedropper, seed from that coordinate as well
+      if (this.lastSamplePoint) {
+        const sx = Math.max(0, Math.min(w - 1, this.lastSamplePoint.x));
+        const sy = Math.max(0, Math.min(h - 1, this.lastSamplePoint.y));
+        const sIdx = sy * w + sx;
+        if (isMatchingColor(sIdx) && isBg[sIdx] === 0) {
+          isBg[sIdx] = 1;
+          queue[tail++] = sIdx;
+        }
+      }
+
+      // BFS flood-fill across connected background
+      while (head < tail) {
+        const curr = queue[head++];
+        const cx = curr % w;
+        const cy = (curr / w) | 0;
+
+        if (cy > 0) {
+          const up = curr - w;
+          if (isBg[up] === 0 && isMatchingColor(up)) {
+            isBg[up] = 1;
+            queue[tail++] = up;
+          }
+        }
+        if (cy < h - 1) {
+          const dn = curr + w;
+          if (isBg[dn] === 0 && isMatchingColor(dn)) {
+            isBg[dn] = 1;
+            queue[tail++] = dn;
+          }
+        }
+        if (cx > 0) {
+          const lf = curr - 1;
+          if (isBg[lf] === 0 && isMatchingColor(lf)) {
+            isBg[lf] = 1;
+            queue[tail++] = lf;
+          }
+        }
+        if (cx < w - 1) {
+          const rt = curr + 1;
+          if (isBg[rt] === 0 && isMatchingColor(rt)) {
+            isBg[rt] = 1;
+            queue[tail++] = rt;
+          }
+        }
+      }
+
+      // Generate mask based on flood-fill result
+      for (let i = 0; i < numPixels; i++) {
+        const mi = i * 4;
+        mask[mi] = 255;
+        mask[mi + 1] = 255;
+        mask[mi + 2] = 255;
+
+        if (isBg[i] === 1) {
+          // Connected to background: calculate alpha with feathering
+          const dr = src[mi] - tr;
+          const dg = src[mi + 1] - tg;
+          const db = src[mi + 2] - tb;
+          const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+
+          if (dist <= tolDist - featherDist) {
+            mask[mi + 3] = 0; // Transparent
+          } else if (dist < tolDist + featherDist && featherDist > 0) {
+            const factor = (dist - (tolDist - featherDist)) / (featherDist * 2);
+            mask[mi + 3] = Math.max(0, Math.min(255, Math.round(factor * 255)));
+          } else {
+            mask[mi + 3] = 255;
+          }
+        } else {
+          // Inside subject (e.g. face, clothes, teeth) -> 100% OPAQUE FOREGROUND!
+          mask[mi + 3] = 255;
+        }
+      }
+    } else {
+      // GLOBAL MODE (all matching pixels keyed)
+      for (let i = 0; i < numPixels; i++) {
+        const mi = i * 4;
+        const r = src[mi];
+        const g = src[mi + 1];
+        const b = src[mi + 2];
+
+        const dr = r - tr;
+        const dg = g - tg;
+        const db = b - tb;
+        const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+
+        mask[mi] = 255;
+        mask[mi + 1] = 255;
+        mask[mi + 2] = 255;
+
+        if (dist <= tolDist - featherDist) {
+          mask[mi + 3] = 0;
+        } else if (dist < tolDist + featherDist && featherDist > 0) {
+          const factor = (dist - (tolDist - featherDist)) / (featherDist * 2);
+          mask[mi + 3] = Math.max(0, Math.min(255, Math.round(factor * 255)));
+        } else {
+          mask[mi + 3] = 255;
+        }
       }
     }
 
