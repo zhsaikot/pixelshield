@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070D14"/>
+      <stop offset="50%" stop-color="#0C1724"/>
+      <stop offset="100%" stop-color="#081018"/>
+    </linearGradient>
+
+    <!-- Accent Emerald Gradient -->
+    <linearGradient id="emerald-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="50%" stop-color="#2A7F62"/>
+      <stop offset="100%" stop-color="#14533D"/>
+    </linearGradient>
+
+    <!-- Shimmering Text Gradient -->
+    <linearGradient id="text-shimmer" x1="0%" y1="0%" x2="200%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="25%" stop-color="#A7F3D0"/>
+      <stop offset="50%" stop-color="#34D399"/>
+      <stop offset="75%" stop-color="#A7F3D0"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+      <animate attributeName="x1" from="-100%" to="100%" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="x2" from="100%" to="300%" dur="7s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <!-- Border Gradient -->
+    <linearGradient id="border-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(52, 211, 153, 0.6)"/>
+      <stop offset="50%" stop-color="rgba(195, 172, 206, 0.4)"/>
+      <stop offset="100%" stop-color="rgba(42, 127, 98, 0.7)"/>
+      <animate attributeName="x1" from="0%" to="100%" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="x2" from="100%" to="200%" dur="6s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <!-- Radial Glow Filter -->
+    <radialGradient id="aura-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#2A7F62" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#070D14" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Grid Pattern -->
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1"/>
+      <circle cx="0" cy="0" r="1.5" fill="rgba(52, 211, 153, 0.15)"/>
+    </pattern>
+
+    <style>
+      @keyframes floatPulse {
+        0%, 100% { transform: translateY(0px) scale(1); }
+        50% { transform: translateY(-4px) scale(1.02); }
+      }
+      @keyframes spinRing {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes glowFade {
+        0%, 100% { opacity: 0.45; }
+        50% { opacity: 0.85; }
+      }
+      @keyframes wave {
+        0%, 100% { transform: scale(1); opacity: 0.4; }
+        50% { transform: scale(1.08); opacity: 0.8; }
+      }
+      .floating-logo {
+        animation: floatPulse 4s ease-in-out infinite;
+        transform-origin: 170px 180px;
+      }
+      .spinning-ring {
+        animation: spinRing 24s linear infinite;
+        transform-origin: 170px 180px;
+      }
+      .pulsing-aura {
+        animation: glowFade 3.5s ease-in-out infinite;
+        transform-origin: 170px 180px;
+      }
+      .badge-chip {
+        transition: transform 0.2s ease;
+      }
+      .badge-chip:hover {
+        transform: translateY(-2px);
+      }
+    </style>
+  </defs>
+
+  <!-- Card Frame -->
+  <rect width="1200" height="360" rx="20" fill="url(#bg-grad)"/>
+  <rect width="1200" height="360" rx="20" fill="url(#grid)"/>
+  <rect width="1196" height="356" x="2" y="2" rx="19" fill="none" stroke="url(#border-grad)" stroke-width="2"/>
+
+  <!-- Background Aura -->
+  <circle cx="170" cy="180" r="150" fill="url(#aura-glow)" class="pulsing-aura"/>
+  <circle cx="1020" cy="180" r="140" fill="url(#aura-glow)" opacity="0.3" class="pulsing-aura"/>
+
+  <!-- LOGO ICON (Left) -->
+  <g class="spinning-ring">
+    <circle cx="170" cy="180" r="72" fill="none" stroke="rgba(52, 211, 153, 0.4)" stroke-width="2" stroke-dasharray="8 6"/>
+    <circle cx="170" cy="180" r="82" fill="none" stroke="rgba(195, 172, 206, 0.25)" stroke-width="1.5" stroke-dasharray="14 10"/>
+  </g>
+
+  <g class="floating-logo">
+    <!-- Outer Shield Container -->
+    <rect x="115" y="125" width="110" height="110" rx="26" fill="url(#emerald-grad)" filter="drop-shadow(0 12px 28px rgba(42, 127, 98, 0.45))"/>
+    <rect x="116" y="126" width="108" height="108" rx="25" fill="none" stroke="rgba(255, 255, 255, 0.4)" stroke-width="1.5"/>
+
+    <!-- Inner Aperture & Photo Framework Mark -->
+    <g transform="translate(138, 148)" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="64" height="64" x="0" y="0" rx="14" fill="rgba(255, 255, 255, 0.08)"/>
+      <circle cx="20" cy="20" r="5" fill="#FFFFFF"/>
+      <path d="m64 45-16-16a5 5 0 0 0-7 0L10 60"/>
+      <!-- Sparkle / 4-point Optimization Star -->
+      <path d="M48 10C48 15 52 19 57 19C52 19 48 23 48 28C48 23 44 19 39 19C44 19 48 15 48 10Z" fill="#FFFFFF" stroke="none"/>
+    </g>
+  </g>
+
+  <!-- BRAND HEADLINE & TYPOGRAPHY -->
+  <g transform="translate(320, 0)">
+    <!-- Top Pill: Status -->
+    <g transform="translate(0, 52)">
+      <rect width="210" height="28" rx="14" fill="rgba(52, 211, 153, 0.12)" stroke="rgba(52, 211, 153, 0.4)" stroke-width="1"/>
+      <circle cx="16" cy="14" r="4.5" fill="#34D399">
+        <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="30" y="19" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#34D399" letter-spacing="0.08em">100% PRIVATE &amp; OFFLINE</text>
+    </g>
+
+    <!-- Main Title -->
+    <text x="0" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-size="56" font-weight="850" fill="url(#text-shimmer)" letter-spacing="-0.03em">
+      PixelShield
+    </text>
+
+    <!-- Subtitle / Tagline -->
+    <text x="0" y="172" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="500" fill="#E2E8F0" letter-spacing="-0.01em">
+      Private Media Lab &amp; Desktop-Grade Image Processing Studio
+    </text>
+
+    <!-- Descriptive Pitch -->
+    <text x="0" y="202" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-size="14.5" font-weight="400" fill="#94A3B8">
+      Zero server egress • 8-pass binary search target-KB • Biometric ID cropper • EXIF purging
+    </text>
+
+    <!-- Feature Badge Row -->
+    <g transform="translate(0, 238)">
+      <!-- Badge 1: Zero-Server -->
+      <g class="badge-chip" transform="translate(0, 0)">
+        <rect width="132" height="34" rx="8" fill="rgba(255, 255, 255, 0.05)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1"/>
+        <text x="14" y="22" font-family="sans-serif" font-size="12.5" font-weight="600" fill="#F1F5F9">🔒 Zero-Server</text>
+      </g>
+
+      <!-- Badge 2: Target-KB -->
+      <g class="badge-chip" transform="translate(142, 0)">
+        <rect width="138" height="34" rx="8" fill="rgba(255, 255, 255, 0.05)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1"/>
+        <text x="14" y="22" font-family="sans-serif" font-size="12.5" font-weight="600" fill="#F1F5F9">⚡ Target-KB</text>
+      </g>
+
+      <!-- Badge 3: EXIF Stripper -->
+      <g class="badge-chip" transform="translate(290, 0)">
+        <rect width="142" height="34" rx="8" fill="rgba(255, 255, 255, 0.05)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1"/>
+        <text x="14" y="22" font-family="sans-serif" font-size="12.5" font-weight="600" fill="#F1F5F9">🛡️ EXIF Purge</text>
+      </g>
+
+      <!-- Badge 4: ID Photo -->
+      <g class="badge-chip" transform="translate(442, 0)">
+        <rect width="146" height="34" rx="8" fill="rgba(255, 255, 255, 0.05)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1"/>
+        <text x="14" y="22" font-family="sans-serif" font-size="12.5" font-weight="600" fill="#F1F5F9">📐 Biometric ID</text>
+      </g>
+
+      <!-- Badge 5: Redactor -->
+      <g class="badge-chip" transform="translate(598, 0)">
+        <rect width="136" height="34" rx="8" fill="rgba(255, 255, 255, 0.05)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1"/>
+        <text x="14" y="22" font-family="sans-serif" font-size="12.5" font-weight="600" fill="#F1F5F9">🔏 Redact &amp; Blur</text>
+      </g>
+
+      <!-- Badge 6: Social Crop -->
+      <g class="badge-chip" transform="translate(744, 0)">
+        <rect width="90" height="34" rx="8" fill="rgba(52, 211, 153, 0.15)" stroke="rgba(52, 211, 153, 0.5)" stroke-width="1"/>
+        <text x="14" y="22" font-family="sans-serif" font-size="12.5" font-weight="700" fill="#34D399">9:16 Crop</text>
+      </g>
+    </g>
+
+    <!-- Bottom Tech Tags -->
+    <g transform="translate(0, 305)">
+      <text font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="600" fill="#64748B">
+        PURE VANILLA ES6+ • HTML5 CANVAS • 100% CLIENT MEMORY • ZERO DEPENDENCIES • PWA READY
+      </text>
+    </g>
+  </g>
+</svg>
