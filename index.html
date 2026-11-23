@@ -1643,6 +1643,15 @@
                   </div>
                   <input type="range" id="bgrem-edge-inset-slider" class="range-slider" min="-5" max="5" value="0">
                 </div>
+
+                <!-- Edge Smoothing Slider -->
+                <div class="slider-control-row" style="margin-top:0.5rem;">
+                  <div class="slider-header-wrap">
+                    <span class="slider-label">Edge Smoothing (Anti-Aliasing):</span>
+                    <span id="bgrem-smoothing-val" class="setting-value-badge">1px</span>
+                  </div>
+                  <input type="range" id="bgrem-smoothing-slider" class="range-slider" min="0" max="5" value="1">
+                </div>
               </div>
             </div>
 
@@ -1651,7 +1660,8 @@
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
                 <label class="control-label" style="margin-bottom:0;">Touch-Up Brushes</label>
                 <div style="display:flex; gap:0.4rem;">
-                  <button type="button" id="bgrem-undo-btn" class="btn btn-xs btn-outline" disabled title="Undo last brush stroke">Undo</button>
+                  <button type="button" id="bgrem-undo-btn" class="btn btn-xs btn-outline" disabled title="Undo last action (Ctrl+Z)">Undo (Ctrl+Z)</button>
+                  <button type="button" id="bgrem-redo-btn" class="btn btn-xs btn-outline" disabled title="Redo last action (Ctrl+Y)">Redo</button>
                   <button type="button" id="bgrem-reset-mask-btn" class="btn btn-xs btn-ghost" title="Reset all edits">Reset</button>
                 </div>
               </div>

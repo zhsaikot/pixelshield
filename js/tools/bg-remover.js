@@ -24,12 +24,15 @@ export class BackgroundRemoverTool {
     
     // Keyer State
     this.colorKeyTarget = { r: 255, g: 255, b: 255, hex: '#FFFFFF' };
+    this.colorKeySamples = []; // Multi-point background samples for gradients
     this.tolerance = 32; // 0 - 100
     this.feather = 4; // 0 - 20
     this.edgeInset = 0; // -5 to +5
+    this.edgeSmoothing = 1; // 0 to 5px anti-aliasing
     this.eyedropperActive = false;
     this.keyerContiguous = true; // Protects subject & face from being cut out
     this.lastSamplePoint = null;
+    this.lastCutoutSource = 'keyer'; // 'keyer' or 'ai'
     
     // Brush / Touch-Up State
     this.brushMode = 'none'; // 'none', 'restore', 'erase'
@@ -37,7 +40,8 @@ export class BackgroundRemoverTool {
     this.brushHardness = 0.75;
     this.isDrawing = false;
     this.history = []; // Mask snapshots for Undo
-    this.maxHistory = 20;
+    this.redoStack = []; // Mask snapshots for Redo
+    this.maxHistory = 25;
 
     // Backdrop State
     this.backdropType = 'transparent'; // 'transparent', 'color', 'gradient', 'blur', 'image'
@@ -54,6 +58,9 @@ export class BackgroundRemoverTool {
     
     this.maskCanvas = document.createElement('canvas');
     this.maskCtx = this.maskCanvas.getContext('2d', { willReadFrequently: true });
+
+    this.aiResultCanvas = document.createElement('canvas');
+    this.aiResultCtx = this.aiResultCanvas.getContext('2d');
 
     this.initDOMElements();
     this.bindEvents();
@@ -91,6 +98,8 @@ export class BackgroundRemoverTool {
     this.featherVal = document.getElementById('bgrem-feather-val');
     this.edgeInsetSlider = document.getElementById('bgrem-edge-inset-slider');
     this.edgeInsetVal = document.getElementById('bgrem-edge-inset-val');
+    this.smoothingSlider = document.getElementById('bgrem-smoothing-slider');
+    this.smoothingVal = document.getElementById('bgrem-smoothing-val');
     this.eyedropperBtn = document.getElementById('bgrem-eyedropper-btn');
     this.keyColorPreview = document.getElementById('bgrem-key-color-preview');
     this.autoDetectColorBtn = document.getElementById('bgrem-auto-detect-btn');
@@ -103,6 +112,7 @@ export class BackgroundRemoverTool {
     this.brushSizeSlider = document.getElementById('bgrem-brush-size-slider');
     this.brushSizeVal = document.getElementById('bgrem-brush-size-val');
     this.undoBtn = document.getElementById('bgrem-undo-btn');
+    this.redoBtn = document.getElementById('bgrem-redo-btn');
     this.resetMaskBtn = document.getElementById('bgrem-reset-mask-btn');
 
     // Backdrop Stage Controls
@@ -207,6 +217,14 @@ export class BackgroundRemoverTool {
       });
     }
 
+    if (this.smoothingSlider) {
+      this.smoothingSlider.addEventListener('input', (e) => {
+        this.edgeSmoothing = parseInt(e.target.value, 10);
+        if (this.smoothingVal) this.smoothingVal.textContent = `${this.edgeSmoothing}px`;
+        this.updateKeyerMask();
+      });
+    }
+
     if (this.eyedropperBtn) {
       this.eyedropperBtn.addEventListener('click', () => {
         this.toggleEyedropper();
@@ -261,6 +279,33 @@ export class BackgroundRemoverTool {
     if (this.undoBtn) {
       this.undoBtn.addEventListener('click', () => this.undo());
     }
+
+    if (this.redoBtn) {
+      this.redoBtn.addEventListener('click', () => this.redo());
+    }
+
+    // Keyboard Shortcuts: Ctrl+Z (Undo) and Ctrl+Y / Ctrl+Shift+Z (Redo)
+    window.addEventListener('keydown', (e) => {
+      if (this.app.activeTab !== 'bg-remover' || !this.currentImage) return;
+
+      const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') return;
+
+      const isMac = navigator.platform && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+
+      if (cmdOrCtrl && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          this.redo();
+        } else {
+          this.undo();
+        }
+      } else if (cmdOrCtrl && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        this.redo();
+      }
+    });
 
     if (this.resetMaskBtn) {
       this.resetMaskBtn.addEventListener('click', () => {
@@ -493,7 +538,9 @@ export class BackgroundRemoverTool {
 
     // Clear history stack
     this.history = [];
+    this.redoStack = [];
     if (this.undoBtn) this.undoBtn.disabled = true;
+    if (this.redoBtn) this.redoBtn.disabled = true;
 
     // Initialize mask to fully opaque
     this.resetToOriginalMask();
@@ -604,6 +651,13 @@ export class BackgroundRemoverTool {
 
       this.maskCtx.putImageData(maskImageData, 0, 0);
 
+      // Store AI result canvas with its clean de-fringed RGB colors
+      this.aiResultCanvas.width = this.canvas.width;
+      this.aiResultCanvas.height = this.canvas.height;
+      this.aiResultCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.aiResultCtx.drawImage(aiImg.img, 0, 0, this.canvas.width, this.canvas.height);
+      this.lastCutoutSource = 'ai';
+
       this.updateAiProgress(100, 'Complete! Subject cutout ready.');
       setTimeout(() => {
         if (this.aiProgressBox) this.aiProgressBox.style.display = 'none';
@@ -636,6 +690,14 @@ export class BackgroundRemoverTool {
   /**
    * Smart Chroma / Color Range Keyer (0ms, 100% Offline TypedArray Math)
    */
+  getRedmeanDistance(r1, g1, b1, r2, g2, b2) {
+    const rmean = (r1 + r2) >> 1;
+    const dr = r1 - r2;
+    const dg = g1 - g2;
+    const db = b1 - b2;
+    return Math.sqrt((((512 + rmean) * dr * dr) >> 8) + 4 * dg * dg + (((767 - rmean) * db * db) >> 8));
+  }
+
   autoDetectBackgroundColor() {
     if (!this.currentImage) return;
     const w = this.origCanvas.width;
@@ -643,37 +705,42 @@ export class BackgroundRemoverTool {
     const imgData = this.origCtx.getImageData(0, 0, w, h);
     const data = imgData.data;
 
-    // Sample the four corners
-    const samples = [
+    // Multi-point perimeter samples to handle non-uniform studio gradients
+    const samplePoints = [
       { x: 4, y: 4 },
       { x: Math.max(0, w - 5), y: 4 },
       { x: 4, y: Math.max(0, h - 5) },
       { x: Math.max(0, w - 5), y: Math.max(0, h - 5) },
-      { x: Math.round(w / 2), y: 4 }, // top center
-      { x: 4, y: Math.round(h / 2) }  // left center
+      { x: Math.round(w / 2), y: 4 },
+      { x: 4, y: Math.round(h / 2) },
+      { x: Math.max(0, w - 5), y: Math.round(h / 2) }
     ];
 
-    let totalR = 0, totalG = 0, totalB = 0;
-    samples.forEach(pt => {
+    this.colorKeySamples = [];
+    samplePoints.forEach(pt => {
       const idx = (pt.y * w + pt.x) * 4;
-      totalR += data[idx];
-      totalG += data[idx + 1];
-      totalB += data[idx + 2];
+      const sr = data[idx];
+      const sg = data[idx + 1];
+      const sb = data[idx + 2];
+      const exists = this.colorKeySamples.some(s => this.getRedmeanDistance(s.r, s.g, s.b, sr, sg, sb) < 30);
+      if (!exists) {
+        this.colorKeySamples.push({ r: sr, g: sg, b: sb });
+      }
     });
 
-    const count = samples.length;
-    const r = Math.round(totalR / count);
-    const g = Math.round(totalG / count);
-    const b = Math.round(totalB / count);
+    const firstIdx = (4 * w + 4) * 4;
+    const r0 = data[firstIdx];
+    const g0 = data[firstIdx + 1];
+    const b0 = data[firstIdx + 2];
 
     this.colorKeyTarget = {
-      r, g, b,
-      hex: this.rgbToHex(r, g, b)
+      r: r0, g: g0, b: b0,
+      hex: this.rgbToHex(r0, g0, b0)
     };
 
     if (this.keyColorPreview) {
       this.keyColorPreview.style.backgroundColor = this.colorKeyTarget.hex;
-      this.keyColorPreview.title = `Sampled: ${this.colorKeyTarget.hex} (RGB: ${r}, ${g}, ${b})`;
+      this.keyColorPreview.title = `Sampled: ${this.colorKeyTarget.hex} (${this.colorKeySamples.length} gradient zones detected)`;
     }
   }
 
@@ -692,6 +759,7 @@ export class BackgroundRemoverTool {
       r, g, b,
       hex: this.rgbToHex(r, g, b)
     };
+    this.colorKeySamples = [{ r, g, b }]; // Focused sample on clicked pixel
 
     if (this.keyColorPreview) {
       this.keyColorPreview.style.backgroundColor = this.colorKeyTarget.hex;
@@ -716,6 +784,7 @@ export class BackgroundRemoverTool {
 
   updateKeyerMask() {
     if (!this.currentImage) return;
+    this.lastCutoutSource = 'keyer';
 
     const w = this.origCanvas.width;
     const h = this.origCanvas.height;
@@ -725,23 +794,33 @@ export class BackgroundRemoverTool {
     const maskData = this.maskCtx.createImageData(w, h);
     const mask = maskData.data;
 
-    const tr = this.colorKeyTarget.r;
-    const tg = this.colorKeyTarget.g;
-    const tb = this.colorKeyTarget.b;
-
-    // Tolerance normalized to [0..441.67] Euclidean distance
-    const maxDist = 441.67;
+    // Use Redmean perceptual color metric (max theoretical distance ~765)
+    const maxDist = 765;
     const tolDist = (this.tolerance / 100) * maxDist;
     const featherDist = (this.feather / 20) * (tolDist * 0.7);
     const cutoffDist = tolDist + featherDist;
-    const cutoffDistSq = cutoffDist * cutoffDist;
+
+    const samples = (this.colorKeySamples && this.colorKeySamples.length > 0)
+      ? this.colorKeySamples
+      : [this.colorKeyTarget];
+
+    // Helper: checks if pixel color matches any of the background sample targets
+    const getMinSampleDistance = (r, g, b) => {
+      let minDist = Infinity;
+      for (let s = 0; s < samples.length; s++) {
+        const sc = samples[s];
+        const d = this.getRedmeanDistance(r, g, b, sc.r, sc.g, sc.b);
+        if (d < minDist) minDist = d;
+      }
+      return minDist;
+    };
 
     const numPixels = w * h;
 
     if (this.keyerContiguous) {
-      // BORDER-CONNECTED FLOOD-FILL:
+      // BORDER-CONNECTED 8-NEIGHBORHOOD FLOOD-FILL:
       // Prevents keying out internal areas (e.g. face, eyes, teeth, clothes).
-      // Only pixels connected to the image boundaries or sampled point are treated as background.
+      // 8-neighborhood allows traversal through fine diagonal hair strands cleanly.
       const isBg = new Uint8Array(numPixels);
       const queue = new Int32Array(numPixels);
       let head = 0;
@@ -749,10 +828,8 @@ export class BackgroundRemoverTool {
 
       const isMatchingColor = (idx) => {
         const pi = idx * 4;
-        const dr = src[pi] - tr;
-        const dg = src[pi + 1] - tg;
-        const db = src[pi + 2] - tb;
-        return (dr * dr + dg * dg + db * db) <= cutoffDistSq;
+        const d = getMinSampleDistance(src[pi], src[pi + 1], src[pi + 2]);
+        return d <= cutoffDist;
       };
 
       // Seed from all four outer image borders
@@ -793,39 +870,51 @@ export class BackgroundRemoverTool {
         }
       }
 
-      // BFS flood-fill across connected background
+      // 8-Neighborhood BFS flood-fill across connected background
       while (head < tail) {
         const curr = queue[head++];
         const cx = curr % w;
         const cy = (curr / w) | 0;
 
-        if (cy > 0) {
+        const hasUp = cy > 0;
+        const hasDn = cy < h - 1;
+        const hasLf = cx > 0;
+        const hasRt = cx < w - 1;
+
+        // Orthogonal
+        if (hasUp) {
           const up = curr - w;
-          if (isBg[up] === 0 && isMatchingColor(up)) {
-            isBg[up] = 1;
-            queue[tail++] = up;
-          }
+          if (isBg[up] === 0 && isMatchingColor(up)) { isBg[up] = 1; queue[tail++] = up; }
         }
-        if (cy < h - 1) {
+        if (hasDn) {
           const dn = curr + w;
-          if (isBg[dn] === 0 && isMatchingColor(dn)) {
-            isBg[dn] = 1;
-            queue[tail++] = dn;
-          }
+          if (isBg[dn] === 0 && isMatchingColor(dn)) { isBg[dn] = 1; queue[tail++] = dn; }
         }
-        if (cx > 0) {
+        if (hasLf) {
           const lf = curr - 1;
-          if (isBg[lf] === 0 && isMatchingColor(lf)) {
-            isBg[lf] = 1;
-            queue[tail++] = lf;
-          }
+          if (isBg[lf] === 0 && isMatchingColor(lf)) { isBg[lf] = 1; queue[tail++] = lf; }
         }
-        if (cx < w - 1) {
+        if (hasRt) {
           const rt = curr + 1;
-          if (isBg[rt] === 0 && isMatchingColor(rt)) {
-            isBg[rt] = 1;
-            queue[tail++] = rt;
-          }
+          if (isBg[rt] === 0 && isMatchingColor(rt)) { isBg[rt] = 1; queue[tail++] = rt; }
+        }
+
+        // Diagonals (reach into intricate hair contours)
+        if (hasUp && hasLf) {
+          const ul = curr - w - 1;
+          if (isBg[ul] === 0 && isMatchingColor(ul)) { isBg[ul] = 1; queue[tail++] = ul; }
+        }
+        if (hasUp && hasRt) {
+          const ur = curr - w + 1;
+          if (isBg[ur] === 0 && isMatchingColor(ur)) { isBg[ur] = 1; queue[tail++] = ur; }
+        }
+        if (hasDn && hasLf) {
+          const dl = curr + w - 1;
+          if (isBg[dl] === 0 && isMatchingColor(dl)) { isBg[dl] = 1; queue[tail++] = dl; }
+        }
+        if (hasDn && hasRt) {
+          const dr = curr + w + 1;
+          if (isBg[dr] === 0 && isMatchingColor(dr)) { isBg[dr] = 1; queue[tail++] = dr; }
         }
       }
 
@@ -837,12 +926,7 @@ export class BackgroundRemoverTool {
         mask[mi + 2] = 255;
 
         if (isBg[i] === 1) {
-          // Connected to background: calculate alpha with feathering
-          const dr = src[mi] - tr;
-          const dg = src[mi + 1] - tg;
-          const db = src[mi + 2] - tb;
-          const dist = Math.sqrt(dr * dr + dg * dg + db * db);
-
+          const dist = getMinSampleDistance(src[mi], src[mi + 1], src[mi + 2]);
           if (dist <= tolDist - featherDist) {
             mask[mi + 3] = 0; // Transparent
           } else if (dist < tolDist + featherDist && featherDist > 0) {
@@ -860,14 +944,7 @@ export class BackgroundRemoverTool {
       // GLOBAL MODE (all matching pixels keyed)
       for (let i = 0; i < numPixels; i++) {
         const mi = i * 4;
-        const r = src[mi];
-        const g = src[mi + 1];
-        const b = src[mi + 2];
-
-        const dr = r - tr;
-        const dg = g - tg;
-        const db = b - tb;
-        const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+        const dist = getMinSampleDistance(src[mi], src[mi + 1], src[mi + 2]);
 
         mask[mi] = 255;
         mask[mi + 1] = 255;
@@ -884,8 +961,94 @@ export class BackgroundRemoverTool {
       }
     }
 
+    // Apply Edge Inset / Choke and Guided Anti-Aliasing Smoothing
+    this.applyMorphologyAndSmoothing(maskData, w, h, this.edgeInset, this.edgeSmoothing);
+
     this.maskCtx.putImageData(maskData, 0, 0);
     this.renderComposite();
+  }
+
+  /**
+   * High-Performance Edge Choke / Inset and Anti-Aliasing Smoothing Filter
+   */
+  applyMorphologyAndSmoothing(maskData, w, h, edgeInset, edgeSmoothing) {
+    const mask = maskData.data;
+    const numPixels = w * h;
+
+    // 1. Edge Inset / Choke (Separable 1D Alpha Erosion / Dilation)
+    if (edgeInset !== 0) {
+      const radius = Math.min(5, Math.abs(edgeInset));
+      const isErode = edgeInset > 0; // Positive = choke (contracts edge, removes color fringe)
+      const tempAlpha = new Uint8Array(numPixels);
+
+      for (let i = 0; i < numPixels; i++) {
+        tempAlpha[i] = mask[i * 4 + 3];
+      }
+
+      // Horizontal pass
+      const horizAlpha = new Uint8Array(numPixels);
+      for (let y = 0; y < h; y++) {
+        const row = y * w;
+        for (let x = 0; x < w; x++) {
+          let val = tempAlpha[row + x];
+          const x0 = Math.max(0, x - radius);
+          const x1 = Math.min(w - 1, x + radius);
+          for (let k = x0; k <= x1; k++) {
+            const v = tempAlpha[row + k];
+            val = isErode ? Math.min(val, v) : Math.max(val, v);
+          }
+          horizAlpha[row + x] = val;
+        }
+      }
+
+      // Vertical pass
+      for (let x = 0; x < w; x++) {
+        for (let y = 0; y < h; y++) {
+          let val = horizAlpha[y * w + x];
+          const y0 = Math.max(0, y - radius);
+          const y1 = Math.min(h - 1, y + radius);
+          for (let k = y0; k <= y1; k++) {
+            const v = horizAlpha[k * w + x];
+            val = isErode ? Math.min(val, v) : Math.max(val, v);
+          }
+          mask[(y * w + x) * 4 + 3] = val;
+        }
+      }
+    }
+
+    // 2. Guided Anti-Aliasing Smoothing Filter on Transition Boundaries
+    if (edgeSmoothing > 0) {
+      const radius = Math.min(3, Math.round(edgeSmoothing));
+      const currentAlpha = new Uint8Array(numPixels);
+      for (let i = 0; i < numPixels; i++) {
+        currentAlpha[i] = mask[i * 4 + 3];
+      }
+
+      for (let y = 1; y < h - 1; y++) {
+        const row = y * w;
+        for (let x = 1; x < w - 1; x++) {
+          const idx = row + x;
+          const a = currentAlpha[idx];
+          // Only smooth transition pixels to preserve sharp inner foreground
+          if (a > 0 && a < 255) {
+            let sum = 0;
+            let count = 0;
+            const x0 = Math.max(0, x - radius);
+            const x1 = Math.min(w - 1, x + radius);
+            const y0 = Math.max(0, y - radius);
+            const y1 = Math.min(h - 1, y + radius);
+            for (let ny = y0; ny <= y1; ny++) {
+              const nrow = ny * w;
+              for (let nx = x0; nx <= x1; nx++) {
+                sum += currentAlpha[nrow + nx];
+                count++;
+              }
+            }
+            mask[idx * 4 + 3] = Math.round(sum / count);
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -950,19 +1113,45 @@ export class BackgroundRemoverTool {
       this.history.shift();
     }
     this.history.push(this.maskCtx.getImageData(0, 0, w, h));
+    this.redoStack = []; // Clear redo stack on new action
     if (this.undoBtn) this.undoBtn.disabled = false;
+    if (this.redoBtn) this.redoBtn.disabled = true;
   }
 
   undo() {
     if (this.history.length === 0) return;
+    const w = this.maskCanvas.width;
+    const h = this.maskCanvas.height;
+    const current = this.maskCtx.getImageData(0, 0, w, h);
+    this.redoStack.push(current);
+
     const prev = this.history.pop();
     this.maskCtx.putImageData(prev, 0, 0);
     this.renderComposite();
+
     if (this.undoBtn) this.undoBtn.disabled = this.history.length === 0;
-    this.app.showToast('Undid last mask action', 'info', 1500);
+    if (this.redoBtn) this.redoBtn.disabled = false;
+    this.app.showToast('Undid action (Ctrl+Z)', 'info', 1500);
+  }
+
+  redo() {
+    if (this.redoStack.length === 0) return;
+    const w = this.maskCanvas.width;
+    const h = this.maskCanvas.height;
+    const current = this.maskCtx.getImageData(0, 0, w, h);
+    this.history.push(current);
+
+    const next = this.redoStack.pop();
+    this.maskCtx.putImageData(next, 0, 0);
+    this.renderComposite();
+
+    if (this.undoBtn) this.undoBtn.disabled = false;
+    if (this.redoBtn) this.redoBtn.disabled = this.redoStack.length === 0;
+    this.app.showToast('Redid action (Ctrl+Y)', 'info', 1500);
   }
 
   resetToOriginalMask() {
+    this.saveHistory();
     const w = this.maskCanvas.width;
     const h = this.maskCanvas.height;
     this.maskCtx.fillStyle = '#FFFFFF';
@@ -1044,8 +1233,12 @@ export class BackgroundRemoverTool {
     fgBuffer.height = h;
     const fgCtx = fgBuffer.getContext('2d');
 
-    // Draw original image
-    fgCtx.drawImage(this.origCanvas, 0, 0, w, h);
+    // Prefer high-fidelity de-fringed AI pixels when available and in AI mode
+    if (this.lastCutoutSource === 'ai' && this.aiResultCanvas && this.aiResultCanvas.width === w) {
+      fgCtx.drawImage(this.aiResultCanvas, 0, 0, w, h);
+    } else {
+      fgCtx.drawImage(this.origCanvas, 0, 0, w, h);
+    }
 
     // Apply alpha mask
     fgCtx.globalCompositeOperation = 'destination-in';
