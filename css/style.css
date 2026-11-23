@@ -2864,11 +2864,11 @@ a:hover {
   flex-direction: column;
 }
 
-/* GitHub Star Callout Strip */
+/* GitHub Star Callout Strip — PixelShield Nordic Botanical Theme */
 .footer-star-strip {
   border-bottom: 1px solid var(--border-subtle);
   padding: 0.65rem 1.75rem;
-  background: rgba(245, 158, 11, 0.05);
+  background: var(--accent-primary-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2877,7 +2877,7 @@ a:hover {
 }
 
 [data-theme="dark"] .footer-star-strip {
-  background: rgba(245, 158, 11, 0.08);
+  background: rgba(52, 156, 120, 0.08);
 }
 
 .footer-star-inner {
@@ -2893,17 +2893,25 @@ a:hover {
 
 .footer-star-inner .star-icon {
   flex-shrink: 0;
-  filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.45));
+  color: var(--accent-primary);
+  fill: var(--accent-primary);
+  filter: drop-shadow(0 0 5px rgba(42, 127, 98, 0.4));
   animation: starGlowPulse 2.8s ease-in-out infinite;
 }
 
+[data-theme="dark"] .footer-star-inner .star-icon {
+  color: #34D399;
+  fill: #34D399;
+  filter: drop-shadow(0 0 7px rgba(52, 211, 153, 0.5));
+}
+
 @keyframes starGlowPulse {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.3)); }
-  50% { transform: scale(1.18) rotate(8deg); filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.85)); }
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 3px rgba(42, 127, 98, 0.3)); }
+  50% { transform: scale(1.18) rotate(8deg); filter: drop-shadow(0 0 8px rgba(42, 127, 98, 0.7)); }
 }
 
 .footer-star-link {
-  color: #D97706;
+  color: var(--accent-primary);
   font-weight: 650;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -2912,12 +2920,17 @@ a:hover {
 }
 
 [data-theme="dark"] .footer-star-link {
-  color: #FBBF24;
+  color: #34D399;
 }
 
 .footer-star-link:hover {
-  color: #F59E0B;
-  text-decoration-color: #F59E0B;
+  color: var(--accent-primary-hover);
+  text-decoration-color: var(--accent-primary-hover);
+}
+
+[data-theme="dark"] .footer-star-link:hover {
+  color: #6EE7B7;
+  text-decoration-color: #6EE7B7;
 }
 
 .footer-github-star-btn {
@@ -2938,21 +2951,27 @@ a:hover {
 }
 
 .footer-github-star-btn:hover {
-  background: var(--bg-hover);
-  border-color: #F59E0B;
-  color: #D97706;
+  background: var(--accent-primary-subtle);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
   transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.25);
+  box-shadow: 0 3px 10px rgba(42, 127, 98, 0.2);
   text-decoration: none;
 }
 
 [data-theme="dark"] .footer-github-star-btn:hover {
-  color: #FBBF24;
+  border-color: #34D399;
+  color: #34D399;
+  box-shadow: 0 3px 10px rgba(52, 211, 153, 0.25);
 }
 
 .star-count-badge {
-  color: #F59E0B;
+  color: var(--accent-primary);
   font-size: 0.82rem;
+}
+
+[data-theme="dark"] .star-count-badge {
+  color: #34D399;
 }
 
 .footer-container {
