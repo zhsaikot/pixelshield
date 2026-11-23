@@ -736,7 +736,7 @@ export class CompressorTool {
             </svg>
             Remove
           </button>
-          <div style="display:flex; gap:0.35rem;">
+          <div class="card-action-group">
             <button class="btn btn-sm btn-outline compare-btn" ${!item.resultBlob ? 'disabled' : ''} title="Inspect on Stage / Compare">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
@@ -744,7 +744,7 @@ export class CompressorTool {
               </svg>
               Compare
             </button>
-            <button class="btn btn-sm btn-primary download-btn" ${!item.resultBlob ? 'disabled' : ''}>
+            <button class="btn btn-sm btn-primary download-btn" ${!item.resultBlob ? 'disabled' : ''} title="Download Compressed Image">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
@@ -759,10 +759,14 @@ export class CompressorTool {
 
     // Event listeners for card buttons
     const removeBtn = card.querySelector('.remove-btn');
-    removeBtn.addEventListener('click', () => this.removeItem(item.id));
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.removeItem(item.id);
+    });
 
     const compareBtn = card.querySelector('.compare-btn');
-    compareBtn.addEventListener('click', () => {
+    compareBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       this.activeFileId = item.id;
       this.updateStageActiveView();
       this.updateFilmstrip();
@@ -770,7 +774,23 @@ export class CompressorTool {
     });
 
     const downloadBtn = card.querySelector('.download-btn');
-    downloadBtn.addEventListener('click', () => this.downloadItem(item));
+    downloadBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.downloadItem(item);
+    });
+
+    // Clicking the preview thumbnail also switches stage focus
+    const previewBox = card.querySelector('.card-preview-box');
+    if (previewBox) {
+      previewBox.style.cursor = 'pointer';
+      previewBox.title = 'Click to inspect on Before/After stage';
+      previewBox.addEventListener('click', () => {
+        this.activeFileId = item.id;
+        this.updateStageActiveView();
+        this.updateFilmstrip();
+        this.scrollToPreview();
+      });
+    }
 
     return card;
   }
