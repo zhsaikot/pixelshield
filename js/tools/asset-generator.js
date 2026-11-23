@@ -74,6 +74,7 @@ export class AssetGeneratorTool {
     this.socialFitModeSelect = document.getElementById('social-fit-mode-select');
     this.socialCanvas = document.getElementById('social-preview-canvas');
     this.socialCtx = this.socialCanvas ? this.socialCanvas.getContext('2d') : null;
+    this.socialAspectBadge = document.getElementById('social-aspect-badge');
     this.socialDownloadBtn = document.getElementById('social-download-btn');
     this.socialChangePhotoBtn = document.getElementById('social-change-photo-btn');
   }
@@ -291,6 +292,17 @@ export class AssetGeneratorTool {
 
     this.socialCanvas.width = canvasW;
     this.socialCanvas.height = canvasH;
+    this.socialCanvas.style.aspectRatio = `${canvasW} / ${canvasH}`;
+    this.socialCanvas.style.maxWidth = '96%';
+    this.socialCanvas.style.maxHeight = '94%';
+    this.socialCanvas.style.width = 'auto';
+    this.socialCanvas.style.height = 'auto';
+
+    if (this.socialAspectBadge) {
+      this.socialAspectBadge.textContent = `${preset.name} (${canvasW}×${canvasH})`;
+      this.socialAspectBadge.style.display = 'inline-flex';
+    }
+
     const ctx = this.socialCtx;
 
     ctx.clearRect(0, 0, canvasW, canvasH);

@@ -140,10 +140,12 @@ a:hover {
 /* Fallback base styles for shell & sidebar */
 .studio-shell {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   width: 100%;
   background: var(--stage-bg);
   color: var(--text-primary);
+  overflow: hidden;
   position: relative;
 }
 
@@ -158,6 +160,7 @@ a:hover {
   flex-direction: column;
   padding: 1.25rem 0.85rem;
   height: 100vh;
+  max-height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 100;
@@ -573,8 +576,12 @@ a:hover {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: var(--stage-bg);
+  position: relative;
 }
 
 .studio-topbar {
@@ -2429,20 +2436,25 @@ a:hover {
 }
 
 /* ==========================================================================
-   Tool 3: Passport & ID Studio Layout
+   Tool 3: Passport & ID Studio Layout & Tool 7: Social Crop Studio
    ========================================================================== */
 
 .passport-studio-layout {
   display: grid;
-  grid-template-columns: 1fr minmax(280px, 360px);
+  grid-template-columns: minmax(0, 1fr) 340px;
   gap: 1.5rem;
   align-items: start;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  scroll-margin-top: calc(var(--topbar-height) + 1.25rem);
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 960px) {
   .passport-studio-layout {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 }
 
@@ -2455,13 +2467,24 @@ a:hover {
   flex-direction: column;
   gap: 1rem;
   box-shadow: var(--shadow-xs);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.passport-sidebar-panel {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .canvas-viewport-container {
   width: 100%;
-  height: 460px;
+  height: 480px;
+  min-height: 340px;
+  max-height: 62vh;
   background: #0B111E;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -2471,15 +2494,27 @@ a:hover {
   touch-action: none;
   cursor: grab;
   border: 1px solid var(--border-subtle);
+  padding: 1.25rem;
+  box-sizing: border-box;
 }
 
 .canvas-viewport-container.is-dragging {
   cursor: grabbing;
 }
 
-.canvas-viewport-container canvas {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+.canvas-viewport-container canvas,
+#social-preview-canvas,
+#passport-editor-canvas {
+  max-width: 96%;
+  max-height: 94%;
+  width: auto;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   background-color: #FFFFFF;
+  border-radius: var(--radius-xs);
+  transition: aspect-ratio 200ms ease;
 }
 
 .canvas-controls-bar {

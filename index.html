@@ -1427,39 +1427,42 @@
           
           <div class="passport-canvas-workspace">
             <div class="canvas-viewport-container" style="cursor:default;">
+              <div id="social-aspect-badge" class="stage-pill-tag tag-before" style="display:none;"></div>
               <canvas id="social-preview-canvas"></canvas>
             </div>
           </div>
 
-          <div class="toolbar-card" style="margin-bottom:0;">
-            <div class="setting-item" style="margin-bottom:1rem;">
-              <label class="setting-label" for="social-preset-select">Social Media Preset</label>
-              <select id="social-preset-select" class="select-dropdown">
-                <option value="instagram-square" selected>1:1 Square (1080 × 1080 px · Instagram Post / LinkedIn)</option>
-                <option value="story-reel">9:16 Story / Reel (1080 × 1920 px · TikTok / Shorts)</option>
-                <option value="youtube-thumb">16:9 Landscape (1280 × 720 px · YouTube / X)</option>
-                <option value="instagram-portrait">4:5 Portrait (1080 × 1350 px · Instagram Feed)</option>
-              </select>
-            </div>
+          <div class="passport-sidebar-panel">
+            <div class="toolbar-card" style="margin-bottom:0;">
+              <div class="setting-item" style="margin-bottom:1rem;">
+                <label class="setting-label" for="social-preset-select">Social Media Preset</label>
+                <select id="social-preset-select" class="select-dropdown">
+                  <option value="instagram-square" selected>1:1 Square (1080 × 1080 px · Instagram Post / LinkedIn)</option>
+                  <option value="story-reel">9:16 Story / Reel (1080 × 1920 px · TikTok / Shorts)</option>
+                  <option value="youtube-thumb">16:9 Landscape (1280 × 720 px · YouTube / X)</option>
+                  <option value="instagram-portrait">4:5 Portrait (1080 × 1350 px · Instagram Feed)</option>
+                </select>
+              </div>
 
-            <div class="setting-item" style="margin-bottom:1.25rem;">
-              <label class="setting-label" for="social-fit-mode-select">Resize &amp; Pad Mode</label>
-              <select id="social-fit-mode-select" class="select-dropdown">
-                <option value="blur-pad" selected>Fit with Blurred Background Fill</option>
-                <option value="center-crop">Center-Crop (Fill Full Screen)</option>
-              </select>
-            </div>
+              <div class="setting-item" style="margin-bottom:1.25rem;">
+                <label class="setting-label" for="social-fit-mode-select">Resize &amp; Pad Mode</label>
+                <select id="social-fit-mode-select" class="select-dropdown">
+                  <option value="blur-pad" selected>Fit with Blurred Background Fill</option>
+                  <option value="center-crop">Center-Crop (Fill Full Screen)</option>
+                </select>
+              </div>
 
-            <div class="btn-group" style="width:100%; flex-direction:column;">
-              <button id="social-download-btn" class="btn btn-primary btn-lg" style="width:100%;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Download Social Graphic (High-Res)
-              </button>
-              <button id="social-change-photo-btn" class="btn btn-outline" style="width:100%;">Change Graphic</button>
+              <div class="btn-group" style="width:100%; flex-direction:column;">
+                <button id="social-download-btn" class="btn btn-primary btn-lg" style="width:100%;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Download Social Graphic (High-Res)
+                </button>
+                <button id="social-change-photo-btn" class="btn btn-outline" style="width:100%;">Change Graphic</button>
+              </div>
             </div>
           </div>
 
