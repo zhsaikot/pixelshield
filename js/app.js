@@ -12,6 +12,7 @@ import { ImageToPdfTool } from './tools/image-to-pdf.js';
 import { RedactorTool } from './tools/redactor.js';
 import { SignatureMakerTool } from './tools/signature-maker.js';
 import { AssetGeneratorTool } from './tools/asset-generator.js';
+import { BackgroundRemoverTool } from './tools/bg-remover.js';
 
 export class App {
   constructor() {
@@ -184,7 +185,7 @@ export class App {
 
   handleHashChange() {
     const rawHash = window.location.hash.replace('#', '').toLowerCase();
-    const validTabs = ['compress', 'convert', 'passport', 'img-to-pdf', 'redact', 'signature', 'assets'];
+    const validTabs = ['compress', 'convert', 'passport', 'img-to-pdf', 'redact', 'signature', 'assets', 'bg-remover'];
     const activeTab = validTabs.includes(rawHash) ? rawHash : 'compress';
 
     this.switchTab(activeTab);
@@ -214,7 +215,8 @@ export class App {
       'img-to-pdf': 'Images to PDF',
       'redact': 'Privacy Redactor',
       'signature': 'Signature & Watermark',
-      'assets': 'Favicon & Social Assets'
+      'assets': 'Favicon & Social Assets',
+      'bg-remover': 'Background Remover'
     };
     const crumb = document.getElementById('studio-active-tool-crumb');
     if (crumb) crumb.textContent = toolNames[tabKey] || 'Studio';
@@ -328,6 +330,7 @@ export class App {
     this.redactor = new RedactorTool(this);
     this.signature = new SignatureMakerTool(this);
     this.assets = new AssetGeneratorTool(this);
+    this.bgRemover = new BackgroundRemoverTool(this);
   }
 
   initCommandPalette() {
@@ -344,6 +347,7 @@ export class App {
       { id: 'redact', label: 'Privacy Redactor & Blur Tool', badge: 'Tool', icon: '⬛', action: () => window.location.hash = '#redact' },
       { id: 'signature', label: 'Signature Cleaner & Watermark', badge: 'Tool', icon: '✍️', action: () => window.location.hash = '#signature' },
       { id: 'assets', label: 'Favicon & Social Media Assets', badge: 'Tool', icon: '🎨', action: () => window.location.hash = '#assets' },
+      { id: 'bg-remover', label: 'Background Remover Studio', badge: 'Tool', icon: '🪄', action: () => window.location.hash = '#bg-remover' },
       { id: 'theme', label: 'Toggle Light / Dark Mode', badge: 'Action', icon: '🌓', action: () => this.toggleTheme() },
       { id: 'fullscreen', label: 'Toggle Fullscreen Canvas Stage', badge: 'Action', icon: '🖥️', action: () => {
         if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
@@ -538,6 +542,8 @@ export class App {
         this.passport.loadImage(file);
       } else if (this.activeTab === 'redact' && this.redactor) {
         this.redactor.loadImage(file);
+      } else if (this.activeTab === 'bg-remover' && this.bgRemover) {
+        this.bgRemover.loadFile(file);
       } else if (this.compressor) {
         window.location.hash = '#compress';
         setTimeout(() => this.compressor.handleFiles([file]), 100);
@@ -563,6 +569,24 @@ export class App {
         const activeModal = document.querySelector('.modal-backdrop.active');
         if (activeModal) {
           activeModal.classList.remove('active');
+        }
+      }
+
+      // Number keys 1-8 for rapid tool navigation when not typing in form controls
+      const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      if (!e.metaKey && !e.ctrlKey && !e.altKey && activeTag !== 'input' && activeTag !== 'textarea' && activeTag !== 'select') {
+        const keyMap = {
+          '1': 'compress',
+          '2': 'convert',
+          '3': 'passport',
+          '4': 'img-to-pdf',
+          '5': 'redact',
+          '6': 'signature',
+          '7': 'assets',
+          '8': 'bg-remover'
+        };
+        if (keyMap[e.key]) {
+          window.location.hash = `#${keyMap[e.key]}`;
         }
       }
     });

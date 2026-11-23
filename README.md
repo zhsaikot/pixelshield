@@ -71,7 +71,7 @@ Traditional online image converters upload your files to remote cloud servers fo
 
 ---
 
-## 🎨 The 7-in-1 Studio Suite
+## 🎨 The 8-in-1 Studio Suite
 
 ### 1. Smart Image Compressor & Target-KB Engine
 > **Subpath:** `#compress` • **Core Tech:** HTML5 Canvas, Binary Search, In-Memory Offscreen Compression
@@ -195,6 +195,30 @@ Traditional online image converters upload your files to remote cloud servers fo
 
 ---
 
+### 8. Background Remover & Backdrop Studio
+> **Subpath:** `#bg-remover` • **Core Tech:** WebAssembly Neural Segmentation (`@imgly/background-removal`), TypedArray Chroma Keyer, Canvas Alpha Compositing
+
+<p align="center">
+  <img src="./assets/screenshots/09_background_remover.png" alt="Background Remover Studio with Dual Engine Cutout & Backdrop Customizer" width="100%" />
+</p>
+
+- **Dual-Engine Precision Architecture:**
+  - **Auto AI Neural Cutout:** Runs client-side ONNX WebAssembly inference locally to cleanly cut out hair strands, pets, e-commerce products, and complex silhouettes with zero server communication.
+  - **Smart Chroma / Color Keyer:** Instant 0ms algorithmic keyer with real-time Euclidean color distance, tolerance slider (0-100%), edge feathering (0-20px), edge choke (-5 to +5px), and interactive canvas eyedropper sampling.
+- **Interactive Touch-Up Studio:**
+  - **Restore Subject Brush:** Paint over accidental cutout areas to bring original pixels back.
+  - **Erase Leftover Brush:** Remove residual background chunks or color halos with adjustable brush radius and softness.
+  - **Undo / Redo Stack:** Multi-step history snapshots.
+- **Studio Backdrop Replacement:**
+  - **True Transparent Alpha:** Checkerboard transparency grid preview for PNG/WebP exports.
+  - **Solid Studio Color:** Amazon Pure White (`#FFFFFF`), Studio Off-White (`#F1F5F9`), Passport Blue (`#3B82F6`), Nordic Teal (`#2A7F62`), Dark Charcoal (`#0F172A`), or custom color picker.
+  - **Studio Lighting Gradient:** Soft radial studio vignette.
+  - **DSLR Portrait Bokeh Blur:** Frosted depth-of-field background blur slider (2-30px).
+  - **Custom Backdrop Photo:** Upload custom scenery or branding images.
+- **Seamless Studio Integration:** One-click transfer to Passport & ID Studio (`#passport`), instant clipboard copy, and lossless PNG/WebP/JPEG downloads.
+
+---
+
 ## 📱 Full Cross-Device Responsiveness
 
 PixelShield is engineered to look and perform flawlessly on every screen size — from high-resolution 4K desktop workstations to compact mobile smartphones.
@@ -224,6 +248,7 @@ Speed up your creative workflow with built-in desktop keyboard shortcuts:
 | <kbd>5</kbd> | **Privacy Redactor** | Navigates directly to Tool 5 |
 | <kbd>6</kbd> | **Signature & Watermark** | Navigates directly to Tool 6 |
 | <kbd>7</kbd> | **Favicon & Social Assets** | Navigates directly to Tool 7 |
+| <kbd>8</kbd> | **Background Remover** | Navigates directly to Tool 8 |
 
 ---
 

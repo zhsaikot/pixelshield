@@ -3842,6 +3842,262 @@ a:hover {
   }
 }
 
+/* ==========================================================================
+   Tool 8: Background Remover & Backdrop Studio Styles
+   ========================================================================== */
+
+/* Checkerboard Pattern for True Transparency */
+.bg-checkerboard {
+  background-color: var(--bg-surface);
+  background-image: 
+    linear-gradient(45deg, rgba(120, 130, 140, 0.12) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(120, 130, 140, 0.12) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(120, 130, 140, 0.12) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(120, 130, 140, 0.12) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+[data-theme="dark"] .bg-checkerboard {
+  background-color: #121820;
+  background-image: 
+    linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+}
+
+.bgrem-workspace {
+  width: 100%;
+}
+
+.bgrem-studio-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 1.5rem;
+  align-items: start;
+  width: 100%;
+}
+
+.bgrem-viewport-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bgrem-viewport {
+  position: relative;
+  width: 100%;
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  user-select: none;
+}
+
+.bgrem-canvas-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 65vh;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+#bgrem-canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 65vh;
+  height: auto;
+  object-fit: contain;
+}
+
+.bgrem-brush-cursor {
+  position: fixed;
+  border: 1.5px solid #2A7F62;
+  background: rgba(42, 127, 98, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 9999;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.bgrem-viewport-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0.25rem;
+}
+
+.bgrem-controls-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  min-width: 0;
+}
+
+.bgrem-setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.bgrem-setting-group:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.bgrem-progress-box {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+}
+
+.bgrem-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--border-subtle);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.bgrem-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2A7F62, #34D399);
+  transition: width 0.3s ease;
+}
+
+.bgrem-progress-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.bgrem-color-preview-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bgrem-backdrop-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.bgrem-backdrop-btn.active {
+  background: var(--color-primary);
+  color: #FFFFFF !important;
+  border-color: var(--color-primary);
+}
+
+.bgrem-color-palette {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.bgrem-color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.bgrem-color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.bgrem-color-swatch.active {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--bg-surface), 0 0 0 4px var(--color-primary);
+}
+
+.bgrem-custom-color-picker-wrap {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.bgrem-custom-color-picker-wrap input[type="color"] {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+}
+
+/* Responsive Adaptations for Tool 8 */
+@media (max-width: 1024px) {
+  .bgrem-studio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bgrem-viewport {
+    min-height: 380px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bgrem-viewport {
+    min-height: 300px;
+  }
+
+  .bgrem-controls-card {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bgrem-viewport {
+    min-height: 240px;
+  }
+
+  .bgrem-backdrop-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* Motion Safety */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

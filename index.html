@@ -149,6 +149,20 @@
           <span class="nav-btn-text">Favicon &amp; Social Assets</span>
           <span class="nav-active-dot"></span>
         </button>
+
+        <!-- Tool 8 -->
+        <button class="nav-tab-btn" data-tab="bg-remover" aria-selected="false" title="Background Remover &amp; Backdrop Studio">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m15 4 4 4L8 19l-4 1 1-4 10-11z"></path>
+              <path d="m18 8 2.5-2.5a2.12 2.12 0 0 0 0-3v0a2.12 2.12 0 0 0-3 0L15 5"></path>
+              <circle cx="6" cy="6" r="1.5" fill="currentColor"></circle>
+              <circle cx="18" cy="18" r="1.5" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Background Remover</span>
+          <span class="nav-active-dot"></span>
+        </button>
       </nav>
 
       <!-- 1-Click Quick Sample Presets ("No Images? Try one of these...") -->
@@ -1470,6 +1484,263 @@
 
       </div>
 
+    </section>
+
+    <!-- =======================================================================
+         TOOL 8: BACKGROUND REMOVER & BACKDROP STUDIO
+         ======================================================================= -->
+    <section id="tab-bg-remover" class="tab-pane" aria-labelledby="tab-bg-remover">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">Background remover &amp; backdrop studio</h1>
+          <div class="privacy-pill-badge" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.3rem 0.75rem; border-radius:999px; background:rgba(42,127,98,0.1); color:var(--color-primary); font-size:0.78rem; font-weight:600;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+            100% In-Browser Privacy
+          </div>
+        </div>
+        <p class="tool-description">
+          Instantly cut out portraits, e-commerce products, and graphics using in-browser WebAssembly AI or instant smart color keying. Replace backdrops with pure white, custom colors, studio gradients, or DSLR bokeh blur.
+        </p>
+      </div>
+
+      <!-- Dropzone -->
+      <div id="bgrem-dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload photo to remove background">
+        <input type="file" id="bgrem-file-input" class="file-input-hidden" accept="image/*">
+        <div class="dropzone-inner">
+          <div class="dropzone-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m15 4 4 4L8 19l-4 1 1-4 10-11z"></path>
+              <path d="m18 8 2.5-2.5a2.12 2.12 0 0 0 0-3v0a2.12 2.12 0 0 0-3 0L15 5"></path>
+              <circle cx="6" cy="6" r="1.5" fill="currentColor"></circle>
+              <circle cx="18" cy="18" r="1.5" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <div class="dropzone-heading">Drop portrait or product photo to remove background</div>
+          <div class="dropzone-subtext">Supports PNG, JPEG, and WebP · 100% client-side memory execution</div>
+          <button type="button" class="dropzone-cta-btn">Choose Image</button>
+        </div>
+      </div>
+
+      <!-- Studio Workspace -->
+      <div id="bgrem-workspace" class="bgrem-workspace" style="display:none;">
+
+        <!-- Viewport Top Toolbar -->
+        <div class="toolbar-card" style="margin-bottom:1rem; padding:0.6rem 1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+              <span id="bgrem-meta-filename" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">image.jpg</span>
+              <span id="bgrem-meta-resolution" class="setting-value-badge">0 × 0 px</span>
+            </div>
+            <div class="btn-group" style="align-items:center; gap:0.5rem;">
+              <button id="bgrem-compare-btn" type="button" class="btn btn-sm btn-outline" title="Hold down to preview untouched original">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                Hold to View Original
+              </button>
+              <button id="bgrem-change-photo-btn" type="button" class="btn btn-sm btn-outline">Change Image</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-Column Responsive Studio Layout -->
+        <div class="bgrem-studio-grid">
+          
+          <!-- Left: Canvas Viewport Stage -->
+          <div class="bgrem-viewport-card">
+            <div id="bgrem-viewport" class="bgrem-viewport">
+              <div id="bgrem-canvas-wrapper" class="bgrem-canvas-wrapper bg-checkerboard">
+                <canvas id="bgrem-canvas"></canvas>
+                <div id="bgrem-brush-cursor" class="bgrem-brush-cursor"></div>
+              </div>
+            </div>
+            <div class="bgrem-viewport-footer">
+              <span style="font-size:0.78rem; color:var(--text-muted);">
+                💡 Zoom to fit · Checkerboard pattern indicates true transparent alpha channel.
+              </span>
+            </div>
+          </div>
+
+          <!-- Right: Controls & Studio Settings -->
+          <div class="bgrem-controls-card">
+
+            <!-- 1. Engine Selector -->
+            <div class="bgrem-setting-group">
+              <label class="control-label" style="margin-bottom:0.4rem;">Cutout Engine</label>
+              <div class="pill-toggle-group" style="width:100%; display:flex;">
+                <button type="button" id="bgrem-mode-ai-btn" class="pill-btn active" style="flex:1;">Auto AI Cutout</button>
+                <button type="button" id="bgrem-mode-keyer-btn" class="pill-btn" style="flex:1;">Smart Color Keyer</button>
+              </div>
+
+              <!-- AI Section -->
+              <div id="bgrem-section-ai" class="bgrem-engine-subpanel" style="margin-top:0.75rem;">
+                <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.75rem; line-height:1.4;">
+                  Uses in-browser WebAssembly neural inference to segment hair, clothing, and subjects with zero network egress.
+                </p>
+                <button type="button" id="bgrem-run-ai-btn" class="btn btn-primary" style="width:100%;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m15 4 4 4L8 19l-4 1 1-4 10-11z"></path>
+                    <path d="m18 8 2.5-2.5a2.12 2.12 0 0 0 0-3v0a2.12 2.12 0 0 0-3 0L15 5"></path>
+                  </svg>
+                  Run AI Background Cutout
+                </button>
+
+                <!-- AI Progress Box -->
+                <div id="bgrem-ai-progress-box" class="bgrem-progress-box" style="display:none; margin-top:0.75rem;">
+                  <div class="bgrem-progress-track">
+                    <div id="bgrem-ai-progress-bar" class="bgrem-progress-fill" style="width:0%;"></div>
+                  </div>
+                  <div id="bgrem-ai-progress-text" class="bgrem-progress-label">0% — Initializing neural model...</div>
+                </div>
+              </div>
+
+              <!-- Keyer Section -->
+              <div id="bgrem-section-keyer" class="bgrem-engine-subpanel" style="display:none; margin-top:0.75rem;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem; margin-bottom:0.75rem;">
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="font-size:0.8rem; font-weight:600; color:var(--text-secondary);">Key Color:</span>
+                    <div id="bgrem-key-color-preview" class="bgrem-color-preview-box" title="Current Key Color"></div>
+                  </div>
+                  <div style="display:flex; gap:0.4rem;">
+                    <button type="button" id="bgrem-eyedropper-btn" class="btn btn-xs btn-outline" title="Click canvas to sample backdrop color">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 22 1-1h3l9-9M14 6l4 4M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                      Eyedropper
+                    </button>
+                    <button type="button" id="bgrem-auto-detect-btn" class="btn btn-xs btn-ghost" title="Auto-detect from image edges">Auto Detect</button>
+                  </div>
+                </div>
+
+                <!-- Tolerance Slider -->
+                <div class="slider-control-row">
+                  <div class="slider-header-wrap">
+                    <span class="slider-label">Tolerance:</span>
+                    <span id="bgrem-tolerance-val" class="setting-value-badge">32%</span>
+                  </div>
+                  <input type="range" id="bgrem-tolerance-slider" class="range-slider" min="0" max="100" value="32">
+                </div>
+
+                <!-- Feather Slider -->
+                <div class="slider-control-row" style="margin-top:0.5rem;">
+                  <div class="slider-header-wrap">
+                    <span class="slider-label">Edge Softness / Feather:</span>
+                    <span id="bgrem-feather-val" class="setting-value-badge">4px</span>
+                  </div>
+                  <input type="range" id="bgrem-feather-slider" class="range-slider" min="0" max="20" value="4">
+                </div>
+
+                <!-- Edge Inset Slider -->
+                <div class="slider-control-row" style="margin-top:0.5rem;">
+                  <div class="slider-header-wrap">
+                    <span class="slider-label">Edge Choke / Inset:</span>
+                    <span id="bgrem-edge-inset-val" class="setting-value-badge">0px</span>
+                  </div>
+                  <input type="range" id="bgrem-edge-inset-slider" class="range-slider" min="-5" max="5" value="0">
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Touch-Up Refine Brushes -->
+            <div class="bgrem-setting-group">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label class="control-label" style="margin-bottom:0;">Touch-Up Brushes</label>
+                <div style="display:flex; gap:0.4rem;">
+                  <button type="button" id="bgrem-undo-btn" class="btn btn-xs btn-outline" disabled title="Undo last brush stroke">Undo</button>
+                  <button type="button" id="bgrem-reset-mask-btn" class="btn btn-xs btn-ghost" title="Reset all edits">Reset</button>
+                </div>
+              </div>
+
+              <div class="pill-toggle-group" style="width:100%; display:flex; margin-bottom:0.5rem;">
+                <button type="button" id="bgrem-brush-none-btn" class="pill-btn active" style="flex:1;">View Only</button>
+                <button type="button" id="bgrem-brush-restore-btn" class="pill-btn" style="flex:1;">Restore Subject</button>
+                <button type="button" id="bgrem-brush-erase-btn" class="pill-btn" style="flex:1;">Erase Leftover</button>
+              </div>
+
+              <!-- Brush Size -->
+              <div class="slider-control-row">
+                <div class="slider-header-wrap">
+                  <span class="slider-label">Brush Size:</span>
+                  <span id="bgrem-brush-size-val" class="setting-value-badge">28px</span>
+                </div>
+                <input type="range" id="bgrem-brush-size-slider" class="range-slider" min="6" max="120" value="28">
+              </div>
+            </div>
+
+            <!-- 3. Backdrop Replacement Studio -->
+            <div class="bgrem-setting-group">
+              <label class="control-label" style="margin-bottom:0.4rem;">Backdrop Replacement</label>
+              <div class="bgrem-backdrop-tabs">
+                <button type="button" class="btn btn-xs btn-outline bgrem-backdrop-btn active" data-backdrop="transparent">Transparent</button>
+                <button type="button" class="btn btn-xs btn-outline bgrem-backdrop-btn" data-backdrop="color">Solid Color</button>
+                <button type="button" class="btn btn-xs btn-outline bgrem-backdrop-btn" data-backdrop="gradient">Studio Gradient</button>
+                <button type="button" class="btn btn-xs btn-outline bgrem-backdrop-btn" data-backdrop="blur">Bokeh Blur</button>
+                <button type="button" class="btn btn-xs btn-outline bgrem-backdrop-btn" data-backdrop="image">Custom Photo</button>
+              </div>
+
+              <!-- Color Palette -->
+              <div id="bgrem-color-palette-wrap" class="bgrem-color-palette" style="display:none; margin-top:0.6rem;">
+                <button type="button" class="bgrem-color-swatch active" data-color="#FFFFFF" style="background:#FFFFFF; border:1px solid #CBD5E1;" title="Pure White (Amazon/E-commerce)"></button>
+                <button type="button" class="bgrem-color-swatch" data-color="#F1F5F9" style="background:#F1F5F9;" title="Studio Light Grey"></button>
+                <button type="button" class="bgrem-color-swatch" data-color="#3B82F6" style="background:#3B82F6;" title="Passport Light Blue"></button>
+                <button type="button" class="bgrem-color-swatch" data-color="#2A7F62" style="background:#2A7F62;" title="PixelShield Jungle Teal"></button>
+                <button type="button" class="bgrem-color-swatch" data-color="#0F172A" style="background:#0F172A;" title="Dark Charcoal"></button>
+                <div class="bgrem-custom-color-picker-wrap" title="Custom Hex Color">
+                  <input type="color" id="bgrem-custom-color-input" value="#FFFFFF">
+                </div>
+              </div>
+
+              <!-- Blur Slider -->
+              <div id="bgrem-blur-control-wrap" class="slider-control-row" style="display:none; margin-top:0.6rem;">
+                <div class="slider-header-wrap">
+                  <span class="slider-label">DSLR Bokeh Blur Radius:</span>
+                  <span id="bgrem-blur-val" class="setting-value-badge">16px</span>
+                </div>
+                <input type="range" id="bgrem-blur-slider" class="range-slider" min="2" max="30" value="16">
+              </div>
+
+              <!-- Custom Image Upload -->
+              <div id="bgrem-custom-img-wrap" style="display:none; margin-top:0.6rem;">
+                <input type="file" id="bgrem-custom-img-input" class="file-input-hidden" accept="image/*">
+                <button type="button" id="bgrem-custom-img-upload-btn" class="btn btn-xs btn-outline" style="width:100%;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  Choose Custom Backdrop Photo
+                </button>
+              </div>
+            </div>
+
+            <!-- 4. Export & Studio Actions -->
+            <div class="bgrem-action-box" style="margin-top:1rem; display:flex; flex-direction:column; gap:0.6rem;">
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <select id="bgrem-format-select" class="select-dropdown" style="flex:1; padding:0.45rem 0.6rem; font-size:0.82rem;">
+                  <option value="image/png" selected>PNG (Lossless / Transparent)</option>
+                  <option value="image/webp">WebP (Optimized Alpha)</option>
+                  <option value="image/jpeg">JPEG (High Res Backdrop)</option>
+                </select>
+                <button id="bgrem-copy-btn" type="button" class="btn btn-outline" title="Copy transparent PNG to clipboard">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  Copy
+                </button>
+              </div>
+
+              <button id="bgrem-download-btn" type="button" class="btn btn-primary btn-lg" style="width:100%;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download Cutout
+              </button>
+
+              <button id="bgrem-send-passport-btn" type="button" class="btn btn-xs btn-ghost" style="width:100%; color:var(--text-secondary);">
+                ➡️ Send Cutout to Passport &amp; ID Studio
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
     </section>
 
       </main>
