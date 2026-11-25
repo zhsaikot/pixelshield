@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://zhsaikot.github.io/pixelshield/"><img src="https://img.shields.io/badge/🚀%20Live%20App-zhsaikot.github.io%2Fpixelshield-2A7F62?style=for-the-badge" alt="Live Demo" /></a>
-  <a href="#-the-7-in-1-studio-suite"><img src="https://img.shields.io/badge/🎨%207%20Creative%20Tools-All--in--One-329A78?style=for-the-badge" alt="7 Tools" /></a>
+  <a href="#-the-9-in-1-studio-suite"><img src="https://img.shields.io/badge/🎨%209%20Creative%20Tools-All--in--One-329A78?style=for-the-badge" alt="9 Tools" /></a>
   <a href="#-zero-server-privacy-guarantee"><img src="https://img.shields.io/badge/🔒%20Zero--Server-100%25%20Local%20Privacy-1E664F?style=for-the-badge" alt="Zero Server" /></a>
   <a href="https://github.com/zhsaikot/pixelshield/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License" /></a>
 </p>
@@ -30,7 +30,7 @@ Every single operation — smart target-KB compression, EXIF metadata purging, i
 
 - [🛡️ Zero-Server Privacy Guarantee](#️-zero-server-privacy-guarantee)
 - [✨ Key Studio Features](#-key-studio-features)
-- [🎨 The 7-in-1 Studio Suite](#-the-7-in-1-studio-suite)
+- [🎨 The 9-in-1 Studio Suite](#-the-9-in-1-studio-suite)
   - [1. Smart Image Compressor & Target-KB Engine](#1-smart-image-compressor--target-kb-engine)
   - [2. Format Converter & EXIF Stripper](#2-format-converter--exif-stripper)
   - [3. Biometric Passport & ID Photo Studio](#3-biometric-passport--id-photo-studio)
@@ -38,6 +38,8 @@ Every single operation — smart target-KB compression, EXIF metadata purging, i
   - [5. Privacy Redactor & Censor Studio](#5-privacy-redactor--censor-studio)
   - [6. Signature Cleaner & Watermark Studio](#6-signature-cleaner--watermark-studio)
   - [7. Favicon Suite & Social Media Asset Studio](#7-favicon-suite--social-media-asset-studio)
+  - [8. Background Remover & Backdrop Studio](#8-background-remover--backdrop-studio)
+  - [9. Smart Video Compressor & Resizer](#9-smart-video-compressor--resizer)
 - [📱 Full Cross-Device Responsiveness](#-full-cross-device-responsiveness)
 - [⌨️ Keyboard Shortcuts](#️-keyboard-shortcuts)
 - [⚡ Running Locally & Offline](#-running-locally--offline)
@@ -217,6 +219,18 @@ Traditional online image converters upload your files to remote cloud servers fo
   - **Custom Backdrop Photo:** Upload custom scenery or branding images.
 - **Seamless Studio Integration:** One-click transfer to Passport & ID Studio (`#passport`), instant clipboard copy, and lossless PNG/WebP/JPEG downloads.
 
+### 9. Smart Video Compressor & Resizer
+
+Compress, resize, and optimize videos directly inside your browser for Discord (25MB/10MB), WhatsApp (16MB), and Email attachments. Powered by hardware-accelerated WebCodecs (`VideoEncoder` + `VideoDecoder`) and `mp4-muxer`.
+
+- **100% Client-Side Privacy:** Videos never leave your device. Encoded using local GPU acceleration (Nvidia, Intel QuickSync, Apple Silicon) up to 5x faster than real-time playback.
+- **Platform Attachment Presets:** Instant 1-click caps for `25 MB (Discord Basic)`, `16 MB (WhatsApp)`, `10 MB (Discord Free)`, `20 MB (Email Cap)`, or custom target MB.
+- **Resolution Scaling:** Scale videos to `1080p`, `720p`, `480p`, `360p`, or keep original resolution while preserving aspect ratio.
+- **Frame Rate (FPS) Control:** Choose `30 FPS`, `24 FPS`, `15 FPS` (ideal for screencasts to cut size by 50%+), or original.
+- **Audio Optimization:** Choose to compress audio to `64 kbps AAC`, `Mute / Strip Audio` (to maximize video bit budget and privacy), or keep high-quality audio.
+- **Live Progress & Telemetry:** Real-time encoding monitor showing encoded frame count, progress percentage, encoding speed multiplier (e.g. `2.8x`), and ETA countdown.
+- **Universal ISO MP4 Export:** Generates standard `.mp4` containers playable on iOS, Android, macOS, Windows, and all social platforms.
+
 ---
 
 ## 📱 Full Cross-Device Responsiveness
@@ -249,6 +263,7 @@ Speed up your creative workflow with built-in desktop keyboard shortcuts:
 | <kbd>6</kbd> | **Signature & Watermark** | Navigates directly to Tool 6 |
 | <kbd>7</kbd> | **Favicon & Social Assets** | Navigates directly to Tool 7 |
 | <kbd>8</kbd> | **Background Remover** | Navigates directly to Tool 8 |
+| <kbd>9</kbd> | **Smart Video Compressor** | Navigates directly to Tool 9 |
 
 ---
 

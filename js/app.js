@@ -13,6 +13,7 @@ import { RedactorTool } from './tools/redactor.js';
 import { SignatureMakerTool } from './tools/signature-maker.js';
 import { AssetGeneratorTool } from './tools/asset-generator.js';
 import { BackgroundRemoverTool } from './tools/bg-remover.js';
+import { VideoCompressorTool } from './tools/video-compressor.js';
 
 export class App {
   constructor() {
@@ -185,7 +186,7 @@ export class App {
 
   handleHashChange() {
     const rawHash = window.location.hash.replace('#', '').toLowerCase();
-    const validTabs = ['compress', 'convert', 'passport', 'img-to-pdf', 'redact', 'signature', 'assets', 'bg-remover'];
+    const validTabs = ['compress', 'convert', 'passport', 'img-to-pdf', 'redact', 'signature', 'assets', 'bg-remover', 'video-compress'];
     const activeTab = validTabs.includes(rawHash) ? rawHash : 'compress';
 
     this.switchTab(activeTab);
@@ -331,6 +332,7 @@ export class App {
     this.signature = new SignatureMakerTool(this);
     this.assets = new AssetGeneratorTool(this);
     this.bgRemover = new BackgroundRemoverTool(this);
+    this.videoCompressor = new VideoCompressorTool(this);
   }
 
   initCommandPalette() {
@@ -348,6 +350,7 @@ export class App {
       { id: 'signature', label: 'Signature Cleaner & Watermark', badge: 'Tool', icon: '✍️', action: () => window.location.hash = '#signature' },
       { id: 'assets', label: 'Favicon & Social Media Assets', badge: 'Tool', icon: '🎨', action: () => window.location.hash = '#assets' },
       { id: 'bg-remover', label: 'Background Remover Studio', badge: 'Tool', icon: '🪄', action: () => window.location.hash = '#bg-remover' },
+      { id: 'video-compress', label: 'Smart Video Compressor', badge: 'Tool', icon: '🎬', action: () => window.location.hash = '#video-compress' },
       { id: 'theme', label: 'Toggle Light / Dark Mode', badge: 'Action', icon: '🌓', action: () => this.toggleTheme() },
       { id: 'fullscreen', label: 'Toggle Fullscreen Canvas Stage', badge: 'Action', icon: '🖥️', action: () => {
         if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
@@ -583,7 +586,8 @@ export class App {
           '5': 'redact',
           '6': 'signature',
           '7': 'assets',
-          '8': 'bg-remover'
+          '8': 'bg-remover',
+          '9': 'video-compress'
         };
         if (keyMap[e.key]) {
           window.location.hash = `#${keyMap[e.key]}`;

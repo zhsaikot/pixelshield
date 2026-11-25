@@ -163,6 +163,24 @@
           <span class="nav-btn-text">Background Remover</span>
           <span class="nav-active-dot"></span>
         </button>
+
+        <!-- Tool 9: Video Compressor -->
+        <button class="nav-tab-btn" data-tab="video-compress" aria-selected="false" title="Smart Video Compressor &amp; Resizer">
+          <div class="nav-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+              <line x1="7" y1="2" x2="7" y2="22"></line>
+              <line x1="17" y1="2" x2="17" y2="22"></line>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <line x1="2" y1="7" x2="7" y2="7"></line>
+              <line x1="2" y1="17" x2="7" y2="17"></line>
+              <line x1="17" y1="17" x2="22" y2="17"></line>
+              <line x1="17" y1="7" x2="22" y2="7"></line>
+            </svg>
+          </div>
+          <span class="nav-btn-text">Video Compressor</span>
+          <span class="nav-active-dot"></span>
+        </button>
       </nav>
 
       <!-- 1-Click Quick Sample Presets ("No Images? Try one of these...") -->
@@ -1755,6 +1773,260 @@
               </button>
             </div>
 
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         TOOL 9: SMART VIDEO COMPRESSOR & RESIZER
+         ======================================================================= -->
+    <section id="tab-video-compress" class="tab-pane" aria-labelledby="tab-video-compress">
+      <div class="tool-header">
+        <div class="tool-title-row">
+          <h1 class="tool-title">Smart Video Compressor &amp; Resizer</h1>
+          <div class="privacy-pill-badge" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.3rem 0.75rem; border-radius:999px; background:rgba(42,127,98,0.1); color:var(--color-primary); font-size:0.78rem; font-weight:600;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+            <span>100% Client-Side WebCodecs • Zero Server Upload</span>
+          </div>
+        </div>
+        <p class="tool-subtitle">
+          Compress, resize, and optimize videos for Discord (25MB), WhatsApp (16MB), and Email attachments. Powered by hardware-accelerated GPU WebCodecs &amp; in-browser MP4 muxing.
+        </p>
+      </div>
+
+      <!-- Video Upload Dropzone -->
+      <div id="vidcomp-dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload video to compress">
+        <input type="file" id="vidcomp-file-input" class="file-input-hidden" accept="video/*,.mp4,.webm,.mov,.mkv,.avi,.m4v">
+        <div class="dropzone-content">
+          <div class="dropzone-icon-box">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+              <line x1="7" y1="2" x2="7" y2="22"></line>
+              <line x1="17" y1="2" x2="17" y2="22"></line>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <line x1="2" y1="7" x2="7" y2="7"></line>
+              <line x1="2" y1="17" x2="7" y2="17"></line>
+              <line x1="17" y1="17" x2="22" y2="17"></line>
+              <line x1="17" y1="7" x2="22" y2="7"></line>
+            </svg>
+          </div>
+          <div class="dropzone-text-group">
+            <h3 class="dropzone-title">Drop your video here, or <span class="browse-link">browse</span></h3>
+            <p class="dropzone-desc">Supports MP4, WebM, QuickTime MOV, MKV. Processed 100% locally in browser GPU memory.</p>
+          </div>
+          <div class="dropzone-meta-chips">
+            <span class="meta-chip">⚡ WebCodecs Hardware Accelerated</span>
+            <span class="meta-chip">📦 Discord &amp; WhatsApp Target Limits</span>
+            <span class="meta-chip">🔒 0 Bytes Uploaded</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Video Workspace (Hidden until video loaded) -->
+      <div id="vidcomp-workspace" class="vidcomp-workspace" style="display:none;">
+        
+        <!-- Video Meta & Action Header -->
+        <div class="bgrem-stage-header" style="margin-bottom:1rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+            <span id="vidcomp-meta-filename" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">video.mp4</span>
+            <span id="vidcomp-meta-duration" class="setting-value-badge">00:00</span>
+            <span id="vidcomp-meta-resolution" class="setting-value-badge">1920 × 1080</span>
+            <span id="vidcomp-meta-orig-size" class="setting-value-badge" style="background:rgba(239,68,68,0.1); color:var(--color-danger); border-color:rgba(239,68,68,0.2);">0 MB</span>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button id="vidcomp-change-video-btn" type="button" class="btn btn-sm btn-outline">Change Video</button>
+          </div>
+        </div>
+
+        <div class="vidcomp-studio-grid">
+          
+          <!-- Left Column: Video Preview & Progress -->
+          <div class="vidcomp-preview-col">
+            
+            <!-- Original Video Card -->
+            <div class="card vidcomp-video-card">
+              <div class="vidcomp-card-header">
+                <span class="vidcomp-card-title">Original Video</span>
+                <span class="vidcomp-card-badge">Source Preview</span>
+              </div>
+              <div class="vidcomp-player-wrapper">
+                <video id="vidcomp-player-original" controls playsinline preload="metadata"></video>
+              </div>
+            </div>
+
+            <!-- Encoding Progress Card (Shown during processing) -->
+            <div id="vidcomp-progress-box" class="card vidcomp-progress-card" style="display:none; margin-top:1rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span id="vidcomp-progress-status" style="font-size:0.82rem; font-weight:600; color:var(--color-primary);">Compressing video...</span>
+                <span id="vidcomp-progress-percent" style="font-size:0.85rem; font-weight:700; color:var(--text-primary);">0%</span>
+              </div>
+              <div class="bgrem-progress-track">
+                <div id="vidcomp-progress-bar" class="bgrem-progress-fill" style="width:0%;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.6rem;">
+                <span id="vidcomp-progress-meta" style="font-size:0.75rem; color:var(--text-muted);">Frame 0 / 0 · Speed: 1.0x · ETA: 0s</span>
+                <button type="button" id="vidcomp-abort-btn" class="btn btn-xs btn-outline" style="color:var(--color-danger); border-color:rgba(239,68,68,0.3);">Cancel</button>
+              </div>
+            </div>
+
+            <!-- Compressed Output Video Card (Shown after completion) -->
+            <div id="vidcomp-compressed-card" class="card vidcomp-video-card" style="display:none; margin-top:1rem;">
+              <div class="vidcomp-card-header" style="background:rgba(42,127,98,0.08);">
+                <span class="vidcomp-card-title" style="color:var(--color-primary);">✨ Compressed Video Preview</span>
+                <span class="vidcomp-card-badge" style="background:var(--color-primary); color:#ffffff;">Ready</span>
+              </div>
+              <div class="vidcomp-player-wrapper">
+                <video id="vidcomp-player-compressed" controls playsinline></video>
+              </div>
+            </div>
+
+            <!-- Results Comparison Summary Box -->
+            <div id="vidcomp-result-box" class="card vidcomp-result-card" style="display:none; margin-top:1rem;">
+              <div class="vidcomp-result-grid">
+                <div class="vidcomp-result-item">
+                  <span class="vidcomp-result-label">Original Size</span>
+                  <span id="vidcomp-result-orig-size" class="vidcomp-result-val">0 MB</span>
+                </div>
+                <div class="vidcomp-result-arrow">➔</div>
+                <div class="vidcomp-result-item">
+                  <span class="vidcomp-result-label">Compressed Size</span>
+                  <span id="vidcomp-result-new-size" class="vidcomp-result-val" style="color:var(--color-primary);">0 MB</span>
+                </div>
+                <div class="vidcomp-result-item">
+                  <span class="vidcomp-result-label">Space Saved</span>
+                  <span id="vidcomp-result-savings-badge" class="setting-value-badge savings-badge-good">-0%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Compression Controls -->
+          <div class="vidcomp-controls-col">
+            <div class="card vidcomp-controls-card">
+              
+              <!-- 1. Compression Mode Switcher -->
+              <div class="bgrem-setting-group">
+                <label class="setting-label-bold">Optimization Mode</label>
+                <div class="segmented-control" style="display:flex; width:100%; gap:0.25rem;">
+                  <button type="button" id="vidcomp-mode-target-btn" class="pill-btn active" style="flex:1;">Target Size Limit</button>
+                  <button type="button" id="vidcomp-mode-quality-btn" class="pill-btn" style="flex:1;">Visual Quality</button>
+                </div>
+
+                <!-- Mode A: Target Size Cap Presets -->
+                <div id="vidcomp-section-target-size" class="vidcomp-subpanel" style="margin-top:0.75rem;">
+                  <span style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:0.4rem;">
+                    Platform Attachment Presets:
+                  </span>
+                  <div class="vidcomp-preset-grid">
+                    <button type="button" class="btn btn-sm btn-outline vidcomp-preset-btn active" data-target-mb="25">
+                      <span class="preset-label-bold">25 MB</span>
+                      <span class="preset-label-sub">Discord Basic</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline vidcomp-preset-btn" data-target-mb="16">
+                      <span class="preset-label-bold">16 MB</span>
+                      <span class="preset-label-sub">WhatsApp</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline vidcomp-preset-btn" data-target-mb="10">
+                      <span class="preset-label-bold">10 MB</span>
+                      <span class="preset-label-sub">Discord Free</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline vidcomp-preset-btn" data-target-mb="20">
+                      <span class="preset-label-bold">20 MB</span>
+                      <span class="preset-label-sub">Email Cap</span>
+                    </button>
+                  </div>
+
+                  <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.75rem;">
+                    <span style="font-size:0.8rem; font-weight:600; color:var(--text-secondary); white-space:nowrap;">Custom Target:</span>
+                    <input type="number" id="vidcomp-custom-size-input" class="text-input" style="width:90px; padding:0.35rem 0.5rem; font-size:0.85rem;" min="1" max="500" value="25" step="1">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">MB</span>
+                  </div>
+                </div>
+
+                <!-- Mode B: Manual Quality Slider -->
+                <div id="vidcomp-section-quality" class="vidcomp-subpanel" style="display:none; margin-top:0.75rem;">
+                  <div class="slider-control-row">
+                    <div class="slider-header-wrap">
+                      <span class="slider-label">Visual Quality:</span>
+                      <span id="vidcomp-quality-val" class="setting-value-badge">65%</span>
+                    </div>
+                    <input type="range" id="vidcomp-quality-slider" class="range-slider" min="10" max="95" value="65">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Resolution Scaling -->
+              <div class="bgrem-setting-group" style="margin-top:1rem;">
+                <label class="setting-label-bold" for="vidcomp-resolution-select">Resolution Scaling</label>
+                <select id="vidcomp-resolution-select" class="select-dropdown" style="width:100%; padding:0.45rem 0.65rem; font-size:0.82rem;">
+                  <option value="original" selected>Original Resolution (Preserve Dimensions)</option>
+                  <option value="1080">1080p (Full HD - max 1920px)</option>
+                  <option value="720">720p (HD Ready - max 1280px)</option>
+                  <option value="480">480p (Standard Definition - max 854px)</option>
+                  <option value="360">360p (Ultra Compact - max 640px)</option>
+                </select>
+              </div>
+
+              <!-- 3. Frame Rate (FPS) -->
+              <div class="bgrem-setting-group" style="margin-top:0.75rem;">
+                <label class="setting-label-bold" for="vidcomp-fps-select">Frame Rate (FPS)</label>
+                <select id="vidcomp-fps-select" class="select-dropdown" style="width:100%; padding:0.45rem 0.65rem; font-size:0.82rem;">
+                  <option value="30" selected>30 FPS (Smooth Standard)</option>
+                  <option value="24">24 FPS (Cinematic Look)</option>
+                  <option value="15">15 FPS (Screen Recording / Maximum Size Savings)</option>
+                  <option value="original">Original FPS</option>
+                </select>
+              </div>
+
+              <!-- 4. Audio Track -->
+              <div class="bgrem-setting-group" style="margin-top:0.75rem;">
+                <label class="setting-label-bold" for="vidcomp-audio-select">Audio Optimization</label>
+                <select id="vidcomp-audio-select" class="select-dropdown" style="width:100%; padding:0.45rem 0.65rem; font-size:0.82rem;">
+                  <option value="compress" selected>Compress Audio (64 kbps AAC)</option>
+                  <option value="mute">Mute / Strip Audio (Maximum Video Quality)</option>
+                  <option value="keep">Keep High Quality Audio (128 kbps)</option>
+                </select>
+              </div>
+
+              <!-- 5. Real-Time Output Estimation Badge -->
+              <div class="vidcomp-est-card" style="margin-top:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:0.78rem; font-weight:600; color:var(--text-secondary);">Estimated Output Size:</span>
+                  <div style="display:flex; gap:0.4rem; align-items:center;">
+                    <span id="vidcomp-est-size-badge" style="font-size:0.88rem; font-weight:700; color:var(--color-primary);">~25 MB</span>
+                    <span id="vidcomp-est-savings-badge" class="setting-value-badge savings-badge-good">-0%</span>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.4rem;">
+                  <span style="font-size:0.72rem; color:var(--text-muted);">Calculated Video Bitrate:</span>
+                  <span id="vidcomp-est-bitrate-badge" style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">1500 kbps</span>
+                </div>
+              </div>
+
+              <!-- 6. Action CTAs -->
+              <div style="margin-top:1.2rem; display:flex; flex-direction:column; gap:0.6rem;">
+                <button type="button" id="vidcomp-compress-btn" class="btn btn-primary btn-lg" style="width:100%;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                  Compress Video (Hardware-Accelerated)
+                </button>
+
+                <button type="button" id="vidcomp-download-btn" class="btn btn-secondary btn-lg" style="width:100%;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Download Compressed MP4
+                </button>
+              </div>
+
+            </div>
           </div>
 
         </div>
