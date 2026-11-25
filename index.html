@@ -1828,16 +1828,26 @@
       <!-- Active Video Workspace (Hidden until video loaded) -->
       <div id="vidcomp-workspace" class="vidcomp-workspace" style="display:none;">
         
-        <!-- Video Meta & Action Header -->
-        <div class="bgrem-stage-header" style="margin-bottom:1rem;">
-          <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
-            <span id="vidcomp-meta-filename" style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">video.mp4</span>
-            <span id="vidcomp-meta-duration" class="setting-value-badge">00:00</span>
-            <span id="vidcomp-meta-resolution" class="setting-value-badge">1920 × 1080</span>
-            <span id="vidcomp-meta-orig-size" class="setting-value-badge" style="background:rgba(239,68,68,0.1); color:var(--color-danger); border-color:rgba(239,68,68,0.2);">0 MB</span>
+        <!-- Video Meta & Action Header Banner -->
+        <div class="vidcomp-meta-banner">
+          <div class="vidcomp-meta-details">
+            <div class="vidcomp-file-title-row">
+              <span class="vidcomp-file-icon">🎬</span>
+              <span id="vidcomp-meta-filename" class="vidcomp-file-title" title="Source Video">video.mp4</span>
+            </div>
+            <div class="vidcomp-meta-tags">
+              <span id="vidcomp-meta-duration" class="setting-value-badge">00:00</span>
+              <span id="vidcomp-meta-resolution" class="setting-value-badge">1920 × 1080</span>
+              <span id="vidcomp-meta-orig-size" class="setting-value-badge vidcomp-size-badge">0 MB</span>
+            </div>
           </div>
-          <div style="display:flex; gap:0.5rem; align-items:center;">
-            <button id="vidcomp-change-video-btn" type="button" class="btn btn-sm btn-outline">Change Video</button>
+          <div class="vidcomp-meta-action">
+            <button id="vidcomp-change-video-btn" type="button" class="vidcomp-change-video-btn" title="Choose a different video file">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              <span>Change Video</span>
+            </button>
           </div>
         </div>
 
@@ -1850,7 +1860,13 @@
             <div class="card vidcomp-video-card">
               <div class="vidcomp-card-header">
                 <span class="vidcomp-card-title">Original Video</span>
-                <span class="vidcomp-card-badge">Source Preview</span>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <span class="vidcomp-card-badge">Source Preview</span>
+                  <button type="button" id="vidcomp-card-change-btn" class="btn btn-xs btn-outline vidcomp-card-swap-btn" title="Change Video">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Change
+                  </button>
+                </div>
               </div>
               <div class="vidcomp-player-wrapper">
                 <video id="vidcomp-player-original" controls playsinline preload="metadata"></video>

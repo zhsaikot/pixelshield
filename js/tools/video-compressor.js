@@ -64,6 +64,7 @@ export class VideoCompressorTool {
     this.metaResolution = document.getElementById('vidcomp-meta-resolution');
     this.metaOriginalSize = document.getElementById('vidcomp-meta-orig-size');
     this.changeVideoBtn = document.getElementById('vidcomp-change-video-btn');
+    this.cardChangeBtn = document.getElementById('vidcomp-card-change-btn');
 
     // Mode Selector
     this.modeTargetBtn = document.getElementById('vidcomp-mode-target-btn');
@@ -145,6 +146,12 @@ export class VideoCompressorTool {
 
     if (this.changeVideoBtn) {
       this.changeVideoBtn.addEventListener('click', () => {
+        this.fileInput.click();
+      });
+    }
+
+    if (this.cardChangeBtn) {
+      this.cardChangeBtn.addEventListener('click', () => {
         this.fileInput.click();
       });
     }
