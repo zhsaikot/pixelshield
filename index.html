@@ -1800,9 +1800,9 @@
       <!-- Video Upload Dropzone -->
       <div id="vidcomp-dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload video to compress">
         <input type="file" id="vidcomp-file-input" class="file-input-hidden" accept="video/*,.mp4,.webm,.mov,.mkv,.avi,.m4v">
-        <div class="dropzone-content">
+        <div class="dropzone-inner">
           <div class="dropzone-icon-box">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
               <line x1="7" y1="2" x2="7" y2="22"></line>
               <line x1="17" y1="2" x2="17" y2="22"></line>
@@ -1813,15 +1813,9 @@
               <line x1="17" y1="7" x2="22" y2="7"></line>
             </svg>
           </div>
-          <div class="dropzone-text-group">
-            <h3 class="dropzone-title">Drop your video here, or <span class="browse-link">browse</span></h3>
-            <p class="dropzone-desc">Supports MP4, WebM, QuickTime MOV, MKV. Processed 100% locally in browser GPU memory.</p>
-          </div>
-          <div class="dropzone-meta-chips">
-            <span class="meta-chip">⚡ WebCodecs Hardware Accelerated</span>
-            <span class="meta-chip">📦 Discord &amp; WhatsApp Target Limits</span>
-            <span class="meta-chip">🔒 0 Bytes Uploaded</span>
-          </div>
+          <div class="dropzone-heading">Drop video to start</div>
+          <div class="dropzone-subtext">MP4, WebM, QuickTime MOV, MKV · Processed 100% locally</div>
+          <button type="button" class="dropzone-cta-btn">Choose video</button>
         </div>
       </div>
 
