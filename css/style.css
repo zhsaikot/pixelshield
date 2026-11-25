@@ -286,6 +286,7 @@ a:hover {
   flex-direction: column;
   gap: 0.3rem;
   flex: 1;
+  margin-bottom: 0.65rem;
 }
 
 .sidebar-nav .nav-tab-btn {
