@@ -35,6 +35,8 @@
   /* Primary Brand: Jungle Teal */
   --accent-primary: #2A7F62;
   --accent-primary-hover: #226951;
+  --color-primary: #2A7F62;
+  --color-primary-hover: #226951;
   --accent-primary-subtle: rgba(42, 127, 98, 0.08);
   --accent-primary-border: rgba(42, 127, 98, 0.25);
 
@@ -155,6 +157,8 @@
 
   --accent-primary: #349C78;      /* Vibrant Jungle Teal */
   --accent-primary-hover: #2BAF83;
+  --color-primary: #349C78;
+  --color-primary-hover: #2BAF83;
   --accent-primary-subtle: rgba(52, 156, 120, 0.12);
   --accent-primary-border: rgba(52, 156, 120, 0.32);
 
