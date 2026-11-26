@@ -34,6 +34,9 @@ export class CompressorTool {
     this.scaleMultiplier = 1.0; // 0.5, 1.0, 2.0 from floating dock
     this.maxWidth = '';
     this.maxHeight = '';
+    this.originalWidth = null;
+    this.originalHeight = null;
+    this.currentAspectRatio = null;
     this.aspectRatioLocked = true;
     this.isProcessing = false;
     this.debounceTimer = null;
@@ -61,6 +64,8 @@ export class CompressorTool {
     this.maxWidthInput = document.getElementById('compressor-max-width');
     this.maxHeightInput = document.getElementById('compressor-max-height');
     this.aspectLockBtn = document.getElementById('compressor-aspect-lock-btn');
+    this.aspectRatioBadge = document.getElementById('compressor-aspect-ratio-badge');
+    this.resizeHelper = document.getElementById('compressor-resize-helper');
     if (this.qualitySlider) {
       const min = parseInt(this.qualitySlider.min, 10) || 0;
       const max = parseInt(this.qualitySlider.max, 10) || 100;
@@ -175,12 +180,32 @@ export class CompressorTool {
 
     // Dimension inputs
     this.maxWidthInput.addEventListener('input', (e) => {
-      this.maxWidth = e.target.value ? parseInt(e.target.value, 10) : '';
+      const rawVal = e.target.value.trim();
+      const val = rawVal ? parseInt(rawVal, 10) : '';
+      this.maxWidth = val;
+      if (val && this.aspectRatioLocked && this.currentAspectRatio) {
+        const computedH = Math.max(1, Math.round(val / this.currentAspectRatio));
+        this.maxHeight = computedH;
+        this.maxHeightInput.value = computedH;
+      } else if (!rawVal && this.aspectRatioLocked) {
+        this.maxHeight = '';
+        this.maxHeightInput.value = '';
+      }
       this.triggerDebouncedBatchProcess();
     });
 
     this.maxHeightInput.addEventListener('input', (e) => {
-      this.maxHeight = e.target.value ? parseInt(e.target.value, 10) : '';
+      const rawVal = e.target.value.trim();
+      const val = rawVal ? parseInt(rawVal, 10) : '';
+      this.maxHeight = val;
+      if (val && this.aspectRatioLocked && this.currentAspectRatio) {
+        const computedW = Math.max(1, Math.round(val * this.currentAspectRatio));
+        this.maxWidth = computedW;
+        this.maxWidthInput.value = computedW;
+      } else if (!rawVal && this.aspectRatioLocked) {
+        this.maxWidth = '';
+        this.maxWidthInput.value = '';
+      }
       this.triggerDebouncedBatchProcess();
     });
 
@@ -196,6 +221,20 @@ export class CompressorTool {
         if (lockIcon && unlockIcon) {
           lockIcon.style.display = this.aspectRatioLocked ? 'inline-block' : 'none';
           unlockIcon.style.display = this.aspectRatioLocked ? 'none' : 'inline-block';
+        }
+        if (this.aspectRatioLocked && this.currentAspectRatio) {
+          if (this.maxWidth) {
+            this.maxHeight = Math.max(1, Math.round(this.maxWidth / this.currentAspectRatio));
+            this.maxHeightInput.value = this.maxHeight;
+          } else if (this.maxHeight) {
+            this.maxWidth = Math.max(1, Math.round(this.maxHeight * this.currentAspectRatio));
+            this.maxWidthInput.value = this.maxWidth;
+          } else if (this.originalWidth && this.originalHeight) {
+            this.maxWidth = this.originalWidth;
+            this.maxHeight = this.originalHeight;
+            this.maxWidthInput.value = this.originalWidth;
+            this.maxHeightInput.value = this.originalHeight;
+          }
         }
         this.triggerDebouncedBatchProcess();
       });
@@ -280,6 +319,12 @@ export class CompressorTool {
         this.dockScalePills.forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
         this.scaleMultiplier = parseFloat(btn.dataset.scale) || 1.0;
+        if (this.originalWidth && this.originalHeight) {
+          this.maxWidth = Math.max(1, Math.round(this.originalWidth * this.scaleMultiplier));
+          this.maxHeight = Math.max(1, Math.round(this.originalHeight * this.scaleMultiplier));
+          if (this.maxWidthInput) this.maxWidthInput.value = this.maxWidth;
+          if (this.maxHeightInput) this.maxHeightInput.value = this.maxHeight;
+        }
         this.triggerDebouncedBatchProcess();
       });
     });
@@ -373,6 +418,67 @@ export class CompressorTool {
     });
   }
 
+  getAspectRatioLabel(w, h) {
+    if (!w || !h) return '';
+    const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+    const divisor = gcd(w, h);
+    const rw = w / divisor;
+    const rh = h / divisor;
+    if ((rw === 16 && rh === 9) || (rw === 4 && rh === 3) || (rw === 1 && rh === 1) || (rw === 3 && rh === 2) || (rw === 21 && rh === 9) || (rw === 9 && rh === 16)) {
+      return `${rw}:${rh}`;
+    }
+    return `${(w / h).toFixed(2)}:1`;
+  }
+
+  updateDimensionInputsForActiveItem(forceSync = false) {
+    const activeItem = this.getActiveItem();
+    if (!activeItem || !activeItem.imgData) {
+      this.originalWidth = null;
+      this.originalHeight = null;
+      this.currentAspectRatio = null;
+      this.maxWidth = '';
+      this.maxHeight = '';
+      if (this.maxWidthInput) {
+        this.maxWidthInput.value = '';
+        this.maxWidthInput.placeholder = 'Auto';
+      }
+      if (this.maxHeightInput) {
+        this.maxHeightInput.value = '';
+        this.maxHeightInput.placeholder = 'Auto';
+      }
+      if (this.aspectRatioBadge) {
+        this.aspectRatioBadge.style.display = 'none';
+      }
+      return;
+    }
+
+    const imgW = activeItem.imgData.width;
+    const imgH = activeItem.imgData.height;
+    this.originalWidth = imgW;
+    this.originalHeight = imgH;
+    this.currentAspectRatio = imgW / imgH;
+
+    if (this.aspectRatioBadge) {
+      this.aspectRatioBadge.textContent = this.getAspectRatioLabel(imgW, imgH);
+      this.aspectRatioBadge.style.display = 'inline-block';
+    }
+
+    if (this.maxWidthInput && this.maxHeightInput) {
+      this.maxWidthInput.placeholder = imgW;
+      this.maxHeightInput.placeholder = imgH;
+
+      if (forceSync || (!this.maxWidth && !this.maxHeight)) {
+        this.maxWidthInput.value = imgW;
+        this.maxHeightInput.value = imgH;
+        this.maxWidth = imgW;
+        this.maxHeight = imgH;
+      } else if (this.maxWidth && this.aspectRatioLocked) {
+        this.maxHeight = Math.max(1, Math.round(this.maxWidth / this.currentAspectRatio));
+        this.maxHeightInput.value = this.maxHeight;
+      }
+    }
+  }
+
   getActiveItem() {
     if (this.files.length === 0) return null;
     const found = this.files.find((f) => f.id === this.activeFileId);
@@ -448,6 +554,7 @@ export class CompressorTool {
 
     if (loadedCount > 0) {
       this.app.showToast(`Added ${loadedCount} image${loadedCount > 1 ? 's' : ''}`, 'success');
+      this.updateDimensionInputsForActiveItem(true);
       this.updateUI();
       this.processAll();
       this.scrollToPreview();
@@ -533,19 +640,30 @@ export class CompressorTool {
       targetH = Math.max(1, Math.round(targetH * this.scaleMultiplier));
     }
 
-    if (this.maxWidth && this.maxWidth < targetW) {
-      const scale = this.maxWidth / targetW;
-      targetW = Math.round(this.maxWidth);
-      if (this.aspectRatioLocked) {
-        targetH = Math.round(targetH * scale);
-      }
-    }
-
-    if (this.maxHeight && this.maxHeight < targetH) {
-      const scale = this.maxHeight / targetH;
-      targetH = Math.round(this.maxHeight);
-      if (this.aspectRatioLocked && !this.maxWidth) {
-        targetW = Math.round(targetW * scale);
+    if (this.maxWidth || this.maxHeight) {
+      if (this.maxWidth && this.maxHeight) {
+        if (this.aspectRatioLocked) {
+          const scaleW = this.maxWidth / imgData.width;
+          const scaleH = this.maxHeight / imgData.height;
+          const scale = Math.min(scaleW, scaleH);
+          targetW = Math.max(1, Math.round(imgData.width * scale));
+          targetH = Math.max(1, Math.round(imgData.height * scale));
+        } else {
+          targetW = Math.max(1, Math.round(this.maxWidth));
+          targetH = Math.max(1, Math.round(this.maxHeight));
+        }
+      } else if (this.maxWidth) {
+        const scale = this.maxWidth / imgData.width;
+        targetW = Math.max(1, Math.round(this.maxWidth));
+        if (this.aspectRatioLocked) {
+          targetH = Math.max(1, Math.round(imgData.height * scale));
+        }
+      } else if (this.maxHeight) {
+        const scale = this.maxHeight / imgData.height;
+        targetH = Math.max(1, Math.round(this.maxHeight));
+        if (this.aspectRatioLocked) {
+          targetW = Math.max(1, Math.round(imgData.width * scale));
+        }
       }
     }
 
@@ -620,6 +738,8 @@ export class CompressorTool {
   updateStageActiveView() {
     const activeItem = this.getActiveItem();
     if (!activeItem || !this.stageWrap) return;
+
+    this.updateDimensionInputsForActiveItem(false);
 
     if (this.dockActiveFilename) {
       this.dockActiveFilename.textContent = activeItem.file.name;
@@ -888,6 +1008,7 @@ export class CompressorTool {
     if (this.activeFileId === id) {
       this.activeFileId = this.files.length > 0 ? this.files[0].id : null;
     }
+    this.updateDimensionInputsForActiveItem(false);
     this.updateUI();
   }
 
@@ -902,6 +1023,7 @@ export class CompressorTool {
     });
     this.files = [];
     this.activeFileId = null;
+    this.updateDimensionInputsForActiveItem(true);
     this.updateUI();
     this.app.showToast('Cleared all files', 'info');
   }
